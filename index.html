@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#10131b">
+<meta name="description" content="Your personal mobile AI Studio">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icon.svg">
+<title>Mobile AI Studio</title>
+<style>
+:root{color-scheme:dark;--bg:#0c0f16;--panel:#151a25;--panel2:#1b2230;--line:#293244;--text:#f3f5fb;--muted:#9aa6ba;--accent:#8b9cff;--green:#68d5ad}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 20% -10%,#202a48 0,transparent 42%),var(--bg);color:var(--text);font:15px system-ui,-apple-system,Segoe UI,sans-serif;min-height:100vh}
+header{position:sticky;top:0;z-index:5;background:#0c0f16eF;backdrop-filter:blur(18px);border-bottom:1px solid var(--line);padding:env(safe-area-inset-top) 18px 14px}
+.top{display:flex;align-items:center;justify-content:space-between;max-width:760px;margin:auto;padding-top:10px}.brand{display:flex;align-items:center;gap:10px;font-weight:750;letter-spacing:.2px}.logo{width:34px;height:34px;border-radius:11px;background:linear-gradient(135deg,#a1adff,#6c78d9);display:grid;place-items:center;color:#10131b;font-weight:900}.status{font-size:11px;color:var(--green);border:1px solid #285b4c;border-radius:99px;padding:5px 9px}
+main{max-width:760px;margin:auto;padding:22px 16px 110px}.eyebrow{color:var(--accent);font-size:11px;letter-spacing:1.6px;font-weight:800}.hero h1{font-size:30px;line-height:1.1;margin:8px 0}.muted{color:var(--muted)}.hero p{line-height:1.5;margin:8px 0 20px}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}.tile,.panel{background:linear-gradient(160deg,#1a2130,#131823);border:1px solid var(--line);border-radius:18px;padding:16px}.tile{min-height:124px;text-align:left;color:var(--text);cursor:pointer}.tile:active,button:active{transform:scale(.985)}.tile .ico{font-size:22px}.tile h3{margin:12px 0 4px;font-size:15px}.tile p{margin:0;color:var(--muted);font-size:12px;line-height:1.4}
+.section{margin-top:24px}.section-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}.section h2{font-size:17px;margin:0}.small{font-size:12px;color:var(--muted)}
+button,.btn{border:1px solid var(--line);background:var(--panel2);color:var(--text);border-radius:12px;padding:10px 13px;font:inherit;cursor:pointer}.primary{background:var(--accent);border-color:var(--accent);color:#10131b;font-weight:750}.quiet{background:transparent}
+nav{position:fixed;z-index:8;bottom:0;left:0;right:0;padding:9px 8px calc(9px + env(safe-area-inset-bottom));background:#10141fee;backdrop-filter:blur(18px);border-top:1px solid var(--line);display:flex;justify-content:center;gap:4px}
+nav button{flex:1;max-width:150px;border:0;background:transparent;color:var(--muted);font-size:11px;padding:8px 2px}nav button.active{color:var(--text);background:#252d40;border-radius:12px}nav span{display:block;font-size:19px;margin-bottom:3px}
+.view{display:none}.view.active{display:block}.row{display:flex;gap:8px;align-items:center}.between{justify-content:space-between}.field{width:100%;background:#0e131d;border:1px solid var(--line);color:var(--text);border-radius:12px;padding:12px;font:inherit;outline:none}.field:focus{border-color:var(--accent)}textarea.field{resize:vertical;min-height:90px}
+.chatlog{display:flex;flex-direction:column;gap:10px;min-height:240px;max-height:52vh;overflow:auto;margin:14px 0}.bubble{max-width:88%;padding:12px 14px;border-radius:16px;line-height:1.45;white-space:pre-wrap}.user{align-self:flex-end;background:#303b5a}.assistant{align-self:flex-start;background:var(--panel2);border:1px solid var(--line)}.notice{font-size:12px;color:var(--muted);line-height:1.45;background:#111722;border:1px solid var(--line);border-radius:12px;padding:11px}
+.item{padding:13px 0;border-bottom:1px solid var(--line)}.item:last-child{border:0}.item strong{display:block}.item small{color:var(--muted)}.empty{text-align:center;padding:26px 12px;color:var(--muted)}
+.modal-actions{display:flex;gap:8px;margin-top:10px}.modal-actions>*{flex:1}
+footer{text-align:center;color:#68748a;font-size:11px;margin-top:28px}
+@media(min-width:600px){main{padding-top:30px}.hero h1{font-size:38px}.grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+</style>
+</head>
+<body>
+<header><div class="top"><div class="brand"><div class="logo">M</div><span>Mobile AI Studio</span></div><div class="status">● LOCAL MODE</div></div></header>
+<main>
+<section id="home" class="view active">
+ <div class="hero"><div class="eyebrow">YOUR CREATIVE COMMAND CENTER</div><h1>Build something<br>brilliant.</h1><p class="muted">Your projects and agent designs stay on this phone. GPT is available through your existing ChatGPT app for now.</p></div>
+ <div class="grid">
+  <button class="tile" data-go="chat"><div class="ico">💬</div><h3>Chat workspace</h3><p>Prepare prompts and open ChatGPT.</p></button>
+  <button class="tile" data-go="projects"><div class="ico">📁</div><h3>Projects</h3><p>Keep plans, notes and decisions together.</p></button>
+  <button class="tile" data-go="agents"><div class="ico">🤖</div><h3>Agent Factory</h3><p>Design agents and their instructions.</p></button>
+  <button class="tile" data-go="testing"><div class="ico">🧪</div><h3>Validation</h3><p>Review agent readiness before approval.</p></button>
+ </div>
+ <div class="section"><div class="section-head"><h2>Workspace status</h2><span class="small">V1.0</span></div><div class="panel"><div class="row between"><span>Phone storage</span><span class="small" style="color:var(--green)">Available</span></div><div class="row between" style="margin-top:12px"><span>GPT connection</span><span class="small">Via ChatGPT app</span></div><div class="row between" style="margin-top:12px"><span>Quinn / local computer</span><span class="small">Not connected</span></div></div></div>
+</section>
+<section id="chat" class="view">
+ <div class="eyebrow">WORKSPACE 01</div><h1>Chat</h1><p class="muted">Draft here, then hand your prompt to the ChatGPT app. This does not use an API key.</p>
+ <div class="notice">Your ChatGPT subscription works in the official ChatGPT app. This standalone studio cannot directly embed that subscription or read its conversations.</div>
+ <div class="section"><label class="small" for="prompt">Message / prompt</label><textarea id="prompt" class="field" placeholder="What would you like to work on?"></textarea><div class="modal-actions"><button id="copyPrompt">Copy prompt</button><button class="primary" id="openGPT">Open ChatGPT ↗</button></div></div>
+ <div class="section"><div class="section-head"><h2>Local notes</h2><button id="saveNote">Save note</button></div><div id="chatNotes" class="panel empty">No saved notes yet.</div></div>
+</section>
+<section id="projects" class="view">
+ <div class="eyebrow">WORKSPACE 02</div><h1>Projects</h1><p class="muted">Project notes are saved on this device.</p>
+ <div class="panel"><input id="projectName" class="field" placeholder="Project name"><textarea id="projectDesc" class="field" style="margin-top:9px" placeholder="Goal, decisions, next steps..."></textarea><button id="addProject" class="primary" style="width:100%;margin-top:9px">＋ Add project</button></div>
+ <div id="projectList" class="section"></div>
+</section>
+<section id="agents" class="view">
+ <div class="eyebrow">WORKSPACE 03</div><h1>Agent Factory</h1><p class="muted">Create specifications first. Nothing is deployed or executed by this version.</p>
+ <div class="panel"><input id="agentName" class="field" placeholder="Agent name"><textarea id="agentRole" class="field" style="margin-top:9px" placeholder="What is this agent responsible for?"></textarea><textarea id="agentRules" class="field" style="margin-top:9px" placeholder="Rules, boundaries, approval requirements..."></textarea><button id="addAgent" class="primary" style="width:100%;margin-top:9px">＋ Save agent design</button></div>
+ <div id="agentList" class="section"></div>
+</section>
+<section id="testing" class="view">
+ <div class="eyebrow">WORKSPACE 04</div><h1>Validation</h1><p class="muted">A lightweight human-review checklist for each proposed agent.</p>
+ <div class="panel">
+  <div class="item"><strong>Purpose is specific</strong><small>One clear responsibility and expected output.</small></div>
+  <div class="item"><strong>Boundaries are defined</strong><small>Forbidden actions and data access are explicit.</small></div>
+  <div class="item"><strong>Approval gates are present</strong><small>Human approval before external actions or deployment.</small></div>
+  <div class="item"><strong>Test cases are written</strong><small>Normal, edge, and failure scenarios.</small></div>
+  <div class="item"><strong>Independent review completed</strong><small>Reviewer is separate from the builder.</small></div>
+  <p class="notice">Passing this checklist is a planning aid, not proof of technical safety or production readiness.</p>
+ </div>
+</section>
+<section id="settings" class="view">
+ <div class="eyebrow">PREFERENCES</div><h1>Settings</h1>
+ <div class="panel">
+  <div class="item"><strong>GPT provider</strong><small>Use your existing ChatGPT app. API connection can be added later.</small><div style="margin-top:9px"><button id="openGPT2">Open ChatGPT ↗</button></div></div>
+  <div class="item"><strong>Offline storage</strong><small>Projects, agent designs and notes are stored in this browser on this phone.</small></div>
+  <div class="item"><strong>Quinn connection</strong><small>Not configured. Add only when you are ready to connect your computer securely.</small></div>
+  <div class="item"><strong>Data controls</strong><small>Export or clear this device's studio data.</small><div class="modal-actions"><button id="exportData">Export backup</button><button id="clearData">Clear local data</button></div></div>
+ </div>
+</section>
+<footer>Mobile AI Studio · V1.0 · Local-first foundation</footer>
+</main>
+<nav>
+<button class="active" data-go="home"><span>⌂</span>Home</button>
+<button data-go="chat"><span>◉</span>Chat</button>
+<button data-go="projects"><span>▣</span>Projects</button>
+<button data-go="agents"><span>✳</span>Agents</button>
+<button data-go="settings"><span>⚙</span>Settings</button>
+</nav>
+<script src="app.js"></script>
+</body></html>
