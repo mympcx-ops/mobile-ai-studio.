@@ -1,0 +1,28 @@
+(()=>{"use strict";
+const KEY="mobile-ai-studio-v1",$=id=>document.getElementById(id),empty={projects:[],agents:[],notes:[]};
+function load(){try{return Object.assign({},empty,JSON.parse(localStorage.getItem(KEY)||"{}"));}catch(e){return Object.assign({},empty);}}
+let data=load(),timer;
+function toast(s){let n=$("studioToast");if(!n){n=document.createElement("div");n.id="studioToast";n.setAttribute("role","status");n.style.cssText="position:fixed;z-index:20;left:16px;right:16px;bottom:88px;padding:12px 16px;border:1px solid #39445c;border-radius:12px;background:#202a3d;color:white;text-align:center;box-shadow:0 8px 28px #0008";document.body.appendChild(n);}n.textContent=s;n.hidden=false;clearTimeout(timer);timer=setTimeout(()=>n.hidden=true,2600);}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(data));toast("Saved on this phone.");}catch(e){toast("Could not save. Check phone storage settings.");}}
+function esc(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+function go(id){if(!$(id))return;document.querySelectorAll(".view").forEach(v=>v.classList.toggle("active",v.id===id));document.querySelectorAll("nav [data-go]").forEach(b=>b.classList.toggle("active",b.dataset.go===id));window.scrollTo({top:0,behavior:"smooth"});}
+function renderProjects(){const r=$("projectList");if(!data.projects.length){r.innerHTML='<div class="panel empty">No projects yet. Add your first project above.</div>';return;}r.innerHTML=data.projects.map(p=>'<div class="panel item"><div class="row between"><strong>'+esc(p.name)+'</strong><button class="quiet" data-remove="projects:'+p.id+'">Delete</button></div><p class="muted" style="white-space:pre-wrap;margin:8px 0 0">'+esc(p.description||"No details added yet.")+'</p><small>'+new Date(p.created).toLocaleString()+'</small></div>').join("");}
+function renderAgents(){const r=$("agentList");if(!data.agents.length){r.innerHTML='<div class="panel empty">No agent designs yet. Save a draft above.</div>';return;}r.innerHTML=data.agents.map(a=>'<div class="panel item"><div class="row between"><strong>'+esc(a.name)+'</strong><button class="quiet" data-remove="agents:'+a.id+'">Delete</button></div><p style="white-space:pre-wrap">'+esc(a.role)+'</p><small>Rules and boundaries</small><p class="muted" style="white-space:pre-wrap">'+esc(a.rules||"Not specified yet.")+'</p><small>Draft only · '+new Date(a.created).toLocaleString()+'</small></div>').join("");}
+function renderNotes(){const r=$("chatNotes");if(!data.notes.length){r.className="panel empty";r.textContent="No saved notes yet.";return;}r.className="panel";r.innerHTML=data.notes.map(n=>'<div class="item"><div class="row between"><small>'+new Date(n.created).toLocaleString()+'</small><button class="quiet" data-remove="notes:'+n.id+'">Delete</button></div><p style="white-space:pre-wrap;margin:8px 0 0">'+esc(n.text)+'</p></div>').join("");}
+function render(){renderProjects();renderAgents();renderNotes();}
+document.addEventListener("click",async e=>{
+const nav=e.target.closest("[data-go]");if(nav){go(nav.dataset.go);return;}
+const b=e.target.closest("button");if(b){switch(b.id){
+case "copyPrompt":{const v=$("prompt").value.trim();if(!v)return toast("Write a prompt first.");try{await navigator.clipboard.writeText(v);toast("Prompt copied.");}catch(x){$("prompt").focus();$("prompt").select();toast("Select and copy the prompt.");}break;}
+case "openGPT":case "openGPT2":window.open("https://chatgpt.com/","_blank","noopener,noreferrer");break;
+case "saveNote":{const v=$("prompt").value.trim();if(!v)return toast("Write a note or prompt first.");data.notes.unshift({id:Date.now(),text:v,created:new Date().toISOString()});data.notes=data.notes.slice(0,100);save();renderNotes();break;}
+case "addProject":{const name=$("projectName").value.trim(),description=$("projectDesc").value.trim();if(!name)return toast("Enter a project name first.");data.projects.unshift({id:Date.now(),name,description,created:new Date().toISOString()});$("projectName").value="";$("projectDesc").value="";save();renderProjects();break;}
+case "addAgent":{const name=$("agentName").value.trim(),role=$("agentRole").value.trim(),rules=$("agentRules").value.trim();if(!name||!role)return toast("Enter an agent name and responsibility.");data.agents.unshift({id:Date.now(),name,role,rules,created:new Date().toISOString()});$("agentName").value="";$("agentRole").value="";$("agentRules").value="";save();renderAgents();break;}
+case "exportData":{const payload=JSON.stringify({app:"Mobile AI Studio",version:"1.0",exportedAt:new Date().toISOString(),...data},null,2),url=URL.createObjectURL(new Blob([payload],{type:"application/json"})),a=document.createElement("a");a.href=url;a.download="mobile-ai-studio-backup.json";document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);toast("Backup export started.");break;}
+case "clearData":if(!confirm("Clear all projects, agent designs and notes stored on this phone? Export a backup first if needed."))return;data=Object.assign({},empty);save();render();toast("This phone's studio data was cleared.");break;
+}}
+const rm=e.target.closest("[data-remove]");if(rm){const parts=rm.dataset.remove.split(":"),kind=parts[0],id=Number(parts[1]);if(!["projects","agents","notes"].includes(kind))return;data[kind]=data[kind].filter(x=>x.id!==id);save();render();}
+});
+render();
+if("serviceWorker"in navigator&&location.protocol.indexOf("http")===0)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(()=>{}));
+})();
