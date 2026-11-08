@@ -1,7 +1,7 @@
 (()=>{"use strict";
 const agents=[];
 function add(id,name,floor,manager,mission,responsibilities,short){
- agents.push({id,name,floor,manager,role:name,mission,responsibilities,shortLabel:short||name,
+ agents.push({id,name,floor,manager,role:name,mission,responsibilities,shortLabel:short||name,definitionStatus:"INITIAL_DRAFT_REQUIRES_OWNER_REVIEW",
   permissionProfile:{localRead:true,localWrite:false,externalNetwork:false,execute:false,publish:false,deploy:false,humanApprovalRequired:true},
   dependencies:[manager+" Manager",floor+" Floor Director","Independent "+floor+" Validator"],
   toolsSkills:[],knowledgeSources:[],lifecycleStatus:"PLANNED",builderStatus:"NOT_STARTED",validationStatus:"NOT_RUN"});
@@ -57,7 +57,7 @@ const oversight=["Music","Media","Racing"].flatMap(floor=>[
 {id:floor.toLowerCase()+"-director",name:floor+" Floor Director",floor,role:"Floor Director",mission:"Lead the "+floor+" floor, delegate work to its managers and coordinate outputs with the studio command hierarchy.",reportsTo:"Studio Watchdog / COO",status:"PLANNED",validationStatus:"NOT_RUN"},
 {id:floor.toLowerCase()+"-validator",name:floor+" Independent Validator",floor,role:"Independent Validator",mission:"Independently review the "+floor+" floor's agent blueprints, tests, permissions and evidence; report findings separately from builders.",reportsTo:"Owner / Secretary approval chain",status:"PLANNED",validationStatus:"NOT_RUN"}
 ]);
-const catalog={schemaVersion:"1.0.0",catalogId:"mobile-ai-studio-canonical-fleet",source:"Recovered canonical fleet definitions from the project planning record",importedAt:null,policy:{defaultLifecycleStatus:"PLANNED",builderStatus:"NOT_STARTED",validationStatus:"NOT_RUN",executionEnabled:false,externalWritesEnabled:false,publishingEnabled:false,deploymentEnabled:false,humanApprovalRequired:true,permissionNote:"Least-privilege planning profile only. Tool access and skills remain unassigned until separately specified and validated."},counts:{agents:agents.length,managers:managers.length,oversight:oversight.length},agents,managers,oversight};
+const catalog={schemaVersion:"1.0.0",catalogId:"mobile-ai-studio-canonical-fleet",source:"Roster and manager assignments reconstructed from prior project context; mission and responsibility text is an initial draft requiring owner review.",importedAt:null,policy:{defaultLifecycleStatus:"PLANNED",builderStatus:"NOT_STARTED",validationStatus:"NOT_RUN",executionEnabled:false,externalWritesEnabled:false,publishingEnabled:false,deploymentEnabled:false,humanApprovalRequired:true,permissionNote:"Provisional least-privilege planning profile only. Tool access and skills remain unassigned until separately specified and validated.",definitionNote:"Agent names and manager assignments are recovered from the project plan; mission and responsibility wording is an initial draft, not a verified verbatim specification."},counts:{agents:agents.length,managers:managers.length,oversight:oversight.length},agents,managers,oversight};
 window.MOBILE_AGENT_CATALOG=catalog;
 const STORAGE="mobile-ai-studio-agent-registry-v1";
 let filter="All",selected=null;
