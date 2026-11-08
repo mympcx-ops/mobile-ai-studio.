@@ -8,7 +8,7 @@ function add(id,label,group,role,mission,x,y,kind="Agent"){nodes.push({id,label,
 add("owner","OWNER","Command","User / Owner","Final authority. Approves high-impact changes, activation and deployment.",360,38,"Owner");
 add("secretary","SECRETARY","Command","Secretary approval gate","Receives requests, checks completeness and routes work for authorization.",360,112,"Oversight");
 add("coo","WATCHDOG / COO","Command","Studio Watchdog / COO","Coordinates studio operations, monitors floor status and escalates issues.",360,190,"Oversight");
-const catalog=window.MOBILE_AGENT_CATALOG;
+const catalogSource=window.MOBILE_AGENT_CATALOG;const catalog=typeof catalogSource==="function"?catalogSource():(catalogSource||{});
 const floorDefs=[
 {name:"Music",x:150,color:colors.Music,n:14,dir:"MUSIC DIRECTOR",val:"MUSIC VALIDATOR"},
 {name:"Media",x:360,color:colors.Media,n:9,dir:"MEDIA DIRECTOR",val:"MEDIA VALIDATOR"},
