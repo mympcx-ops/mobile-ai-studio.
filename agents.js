@@ -77,7 +77,7 @@ function render(){
 }
 document.addEventListener("click",e=>{
  const f=e.target.closest("[data-agent-filter]");if(f){filter=f.dataset.agentFilter;document.querySelectorAll("[data-agent-filter]").forEach(b=>b.classList.toggle("selected",b===f));render();return;}
- const card=e.target.closest("[data-agent-id]");if(card){selected=card.dataset.agentId;render();return;}
+ const card=e.target.closest("[data-agent-id]");if(card){selected=card.dataset.agentId;render();if(window.openAgentDetails)window.openAgentDetails(selected);return;}
  if(e.target.closest("#importCanonicalAgents")){
   const payload={...catalog,importedAt:new Date().toISOString(),agents:agents.map(a=>({...a,dependencies:[...a.dependencies],permissionProfile:{...a.permissionProfile}})),managers:managers.map(m=>({...m,manages:[...m.manages]})),oversight:oversight.map(o=>({...o}))};
   try{localStorage.setItem(STORAGE,JSON.stringify(payload));render();const s=$("agentImportFeedback");if(s)s.textContent="Imported successfully. All records remain Planned; builders have not run and validators have not approved anything.";}catch(err){const s=$("agentImportFeedback");if(s)s.textContent="Import failed: phone storage is unavailable or full.";}
