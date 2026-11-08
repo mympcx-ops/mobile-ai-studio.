@@ -45,6 +45,20 @@ footer{text-align:center;color:#68748a;font-size:11px;margin-top:28px}
 .galaxy-legend{display:flex;gap:12px;flex-wrap:wrap;padding:0 13px 12px;color:#aab9d6;font-size:11px}
 .galaxy-dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:5px}
 @media(max-width:420px){.galaxy-stage{height:440px;min-height:440px}.galaxy-node text{font-size:9px}}
+.directory-summary{padding:12px;border:1px solid #33436f;border-radius:13px;background:#101a34;margin:12px 0;color:#dce7ff;font-size:13px;line-height:1.6}
+.directory-filters{display:flex;gap:7px;flex-wrap:wrap;margin:12px 0}
+.directory-filters button.selected{background:#34446b;border-color:#91a5ff;color:#fff}
+.directory-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+.directory-card{text-align:left;min-width:0;padding:12px;background:#151d2c;border:1px solid var(--line);border-radius:13px;color:var(--text)}
+.directory-card strong,.directory-card small,.directory-floor{display:block;overflow-wrap:anywhere}
+.directory-card strong{font-size:13px;margin:6px 0}
+.directory-card small{font-size:10px;color:#f5c979}
+.directory-floor{font-size:10px;color:var(--muted)}
+.directory-state{font-size:10px;border:1px solid #755b32;color:#ffd58b;border-radius:99px;padding:4px 7px}
+.directory-meta{display:grid;grid-template-columns:100px 1fr;gap:8px;font-size:12px;line-height:1.4}
+.directory-meta b{color:#aebde0}
+#agentProfile{margin-top:12px}
+@media(max-width:370px){.directory-list{grid-template-columns:1fr}.directory-meta{grid-template-columns:1fr;gap:3px}}
 
 </style>
 </head>
@@ -56,7 +70,7 @@ footer{text-align:center;color:#68748a;font-size:11px;margin-top:28px}
  <div class="grid">
   <button class="tile" data-go="chat"><div class="ico">💬</div><h3>Chat workspace</h3><p>Prepare prompts and open ChatGPT.</p></button>
   <button class="tile" data-go="projects"><div class="ico">📁</div><h3>Projects</h3><p>Keep plans, notes and decisions together.</p></button>
-  <button class="tile" data-go="agents"><div class="ico">🤖</div><h3>Agent Factory</h3><p>Design agents and their instructions.</p></button>
+  <button class="tile" data-go="agents"><div class="ico">🤖</div><h3>Agent Directory</h3><p>Import and inspect the canonical agent fleet.</p></button>
   <button class="tile" data-go="testing"><div class="ico">🧪</div><h3>Validation</h3><p>Review agent readiness before approval.</p></button>
  </div>
  <div class="section"><div class="section-head"><h2>Workspace status</h2><span class="small">V1.0</span></div><div class="panel"><div class="row between"><span>Phone storage</span><span class="small" style="color:var(--green)">Available</span></div><div class="row between" style="margin-top:12px"><span>GPT connection</span><span class="small">Via ChatGPT app</span></div><div class="row between" style="margin-top:12px"><span>Quinn / local computer</span><span class="small">Not connected</span></div></div></div>
@@ -73,7 +87,15 @@ footer{text-align:center;color:#68748a;font-size:11px;margin-top:28px}
  <div id="projectList" class="section"></div>
 </section>
 <section id="agents" class="view">
- <div class="eyebrow">WORKSPACE 03</div><h1>Agent Factory</h1><p class="muted">Create specifications first. Nothing is deployed or executed by this version.</p>
+ <div class="eyebrow">WORKSPACE 03</div><h1>Agent Directory</h1><p class="muted">The canonical studio fleet, its managers and independent floor validators. Imported records are planning blueprints only.</p>
+ <div class="directory-summary" id="agentImportSummary">Loading canonical fleet…</div>
+ <div class="row between"><strong>Canonical fleet</strong><button id="importCanonicalAgents" class="primary">Import 29 agents + 6 oversight roles</button></div>
+ <div class="directory-filters"><button class="selected" data-agent-filter="All">All floors</button><button data-agent-filter="Music">Music</button><button data-agent-filter="Media">Media</button><button data-agent-filter="Racing">Racing</button></div>
+ <div id="canonicalAgentList" class="directory-list"></div>
+ <div id="agentProfile" class="panel"></div>
+ <p id="agentImportFeedback" class="small" aria-live="polite">Importing saves the canonical registry on this phone. It does not activate agents.</p>
+ <div class="section"><div class="section-head"><h2>Custom agent drafts</h2><span class="small">Optional</span></div>
+ <p class="muted">Create additional agent specifications separately from the canonical fleet.</p>
  <div class="panel"><input id="agentName" class="field" placeholder="Agent name"><textarea id="agentRole" class="field" style="margin-top:9px" placeholder="What is this agent responsible for?"></textarea><textarea id="agentRules" class="field" style="margin-top:9px" placeholder="Rules, boundaries, approval requirements..."></textarea><button id="addAgent" class="primary" style="width:100%;margin-top:9px">＋ Save agent design</button></div>
  <div id="agentList" class="section"></div>
 </section>
@@ -131,5 +153,6 @@ footer{text-align:center;color:#68748a;font-size:11px;margin-top:28px}
 <button data-go="settings"><span>⚙</span>Settings</button>
 </nav>
 <script src="app.js"></script>
+<script src="agents.js"></script>
 <script src="galaxy.js"></script>
 </body></html>
