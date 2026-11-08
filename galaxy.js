@@ -8,16 +8,27 @@ function add(id,label,group,role,mission,x,y,kind="Agent"){nodes.push({id,label,
 add("owner","OWNER","Command","User / Owner","Final authority. Approves high-impact changes, activation and deployment.",360,38,"Owner");
 add("secretary","SECRETARY","Command","Secretary approval gate","Receives requests, checks completeness and routes work for authorization.",360,112,"Oversight");
 add("coo","WATCHDOG / COO","Command","Studio Watchdog / COO","Coordinates studio operations, monitors floor status and escalates issues.",360,190,"Oversight");
-const floors=[{name:"Music",x:150,color:colors.Music,n:14,dir:"MUSIC DIRECTOR",val:"MUSIC VALIDATOR"},{name:"Media",x:360,color:colors.Media,n:9,dir:"MEDIA DIRECTOR",val:"MEDIA VALIDATOR"},{name:"Racing",x:570,color:colors.Racing,n:6,dir:"RACING DIRECTOR",val:"RACING VALIDATOR"}];
-floors.forEach((f,fi)=>{add(f.name+"-director",f.dir,f.name,"Floor Director",f.name+" floor leadership; delegates work and reviews agent outputs.",f.x,280,"Director");add(f.name+"-validator",f.val,f.name,"Independent Validator","Independent review role; reports validation findings separately from the builder.",f.x,535,"Validator");for(let i=0;i<f.n;i++){const col=i%4,row=Math.floor(i/4);add(f.name+"-agent-"+(i+1), "AGENT "+String(i+1).padStart(2,"0"),f.name,"Planned agent role","Role details are retained for the approved fleet specification and will be populated from the canonical agent directory.",f.x-68+col*45,370+row*47,"Agent");}});
+const catalog=window.MOBILE_AGENT_CATALOG;
+const floorDefs=[
+{name:"Music",x:150,color:colors.Music,n:14,dir:"MUSIC DIRECTOR",val:"MUSIC VALIDATOR"},
+{name:"Media",x:360,color:colors.Media,n:9,dir:"MEDIA DIRECTOR",val:"MEDIA VALIDATOR"},
+{name:"Racing",x:570,color:colors.Racing,n:6,dir:"RACING DIRECTOR",val:"RACING VALIDATOR"}];
+const floors=floorDefs.map(f=>({...f,agents:(catalog?.agents||[]).filter(a=>a.floor===f.name),managers:(catalog?.managers||[]).filter(m=>m.floor===f.name)}));
+floors.forEach(f=>{
+ add(f.name+"-director",f.dir,f.name,"Floor Director",f.name+" floor leadership; delegates work and reviews agent outputs.",f.x,280,"Director");
+ add(f.name+"-validator",f.val,f.name,"Independent Validator","Independent review role; reports validation findings separately from the builder.",f.x,550,"Validator");
+ const ms=f.managers.length?f.managers:[];
+ ms.forEach((m,i)=>{const mx=f.x-((ms.length-1)*28)/2+i*28;add(m.id,m.name,f.name,"Manager","Manages: "+m.manages.join(", "),mx,330,"Manager");});
+ f.agents.forEach((a,i)=>{const col=i%4,row=Math.floor(i/4);add(a.id,a.name,f.name,a.manager,a.mission,f.x-68+col*45,390+row*39,"Agent");});
+});
 const links=[];
 links.push(["owner","secretary"],["secretary","coo"]);
-floors.forEach(f=>{links.push(["coo",f.name+"-director"],[f.name+"-director",f.name+"-validator"]);for(let i=1;i<=f.n;i++)links.push([f.name+"-director",f.name+"-agent-"+i]);});
+floors.forEach(f=>{links.push(["coo",f.name+"-director"],[f.name+"-director",f.name+"-validator"]);f.managers.forEach(m=>{links.push([f.name+"-director",m.id]);m.manages.forEach(name=>{const a=f.agents.find(x=>x.name===name);if(a)links.push([m.id,a.id]);});});if(!f.managers.length)f.agents.forEach(a=>links.push([f.name+"-director",a.id]));});
 let scale=1,tx=0,ty=0,activeFilter="All",selected="owner",drag=null,pinch=null;
 const positions=Object.fromEntries(nodes.map(n=>[n.id,n]));
 function el(tag,attrs={}){const e=document.createElementNS(NS,tag);Object.entries(attrs).forEach(([k,v])=>e.setAttribute(k,v));return e;}
 function draw(){world.replaceChildren();const lines=el("g",{class:"galaxy-links"});links.forEach(([a,b])=>{const p=positions[a],q=positions[b];lines.appendChild(el("line",{x1:p.x,y1:p.y,x2:q.x,y2:q.y}));});world.appendChild(lines);
-nodes.filter(n=>activeFilter==="All"||n.group===activeFilter||n.group==="Command").forEach(n=>{const g=el("g",{class:"galaxy-node"+(n.id===selected?" selected":""),transform:"translate("+n.x+" "+n.y+")",tabindex:"0",role:"button","aria-label":n.label});const c=colors[n.group]||colors.Oversight;g.appendChild(el("circle",{r:n.kind==="Owner"?22:n.kind==="Director"||n.kind==="Validator"?16:10,fill:c,"fill-opacity":".18",stroke:c}));const t=el("text",{y:n.kind==="Owner"?4:3});t.textContent=n.kind==="Owner"?"★":n.kind==="Director"?"D":n.kind==="Validator"?"V":"•";g.appendChild(t);const label=el("text",{y:n.kind==="Owner"?36:25});label.textContent=n.label;g.appendChild(label);g.addEventListener("click",()=>select(n));g.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();select(n);}});world.appendChild(g);});applyTransform();}
+nodes.filter(n=>activeFilter==="All"||n.group===activeFilter||n.group==="Command").forEach(n=>{const g=el("g",{class:"galaxy-node"+(n.id===selected?" selected":""),transform:"translate("+n.x+" "+n.y+")",tabindex:"0",role:"button","aria-label":n.label});const c=colors[n.group]||colors.Oversight;g.appendChild(el("circle",{r:n.kind==="Owner"?22:n.kind==="Director"||n.kind==="Validator"?16:n.kind==="Manager"?13:9,fill:c,"fill-opacity":".18",stroke:c}));const t=el("text",{y:n.kind==="Owner"?4:3});t.textContent=n.kind==="Owner"?"★":n.kind==="Director"?"D":n.kind==="Validator"?"V":n.kind==="Manager"?"M":"•";g.appendChild(t);const label=el("text",{y:n.kind==="Owner"?36:n.kind==="Manager"?21:25});label.textContent=n.label;g.appendChild(label);g.addEventListener("click",()=>select(n));g.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();select(n);}});world.appendChild(g);});applyTransform();}
 function applyTransform(){world.setAttribute("transform","translate("+tx+" "+ty+") scale("+scale+")");}
 function select(n){selected=n.id;detail.innerHTML="<strong>"+n.label+"</strong><p style='margin:6px 0'>"+n.role+"</p><small>"+n.mission+"</small><p style='margin:7px 0 0'><small>Group: "+n.group+" · Status: Planned / not connected</small></p>";draw();}
 function zoom(f){scale=Math.max(.65,Math.min(2.8,scale*f));applyTransform();}
