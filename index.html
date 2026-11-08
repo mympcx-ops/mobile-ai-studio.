@@ -26,6 +26,26 @@ nav button{flex:1;max-width:150px;border:0;background:transparent;color:var(--mu
 .modal-actions{display:flex;gap:8px;margin-top:10px}.modal-actions>*{flex:1}
 footer{text-align:center;color:#68748a;font-size:11px;margin-top:28px}
 @media(min-width:600px){main{padding-top:30px}.hero h1{font-size:38px}.grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+
+/* Galaxy Command layer */
+.galaxy-shell{background:radial-gradient(ellipse at 50% 45%,#18234a 0%,#090d1c 48%,#050711 100%);border:1px solid #27345d;border-radius:20px;overflow:hidden;position:relative}
+.galaxy-toolbar{display:flex;gap:7px;flex-wrap:wrap;padding:12px;border-bottom:1px solid #28345a;background:#0a1024cc}
+.galaxy-toolbar button{font-size:12px;padding:8px 10px}
+.galaxy-toolbar button.selected{border-color:#67d9ff;color:#8ee8ff;background:#102b48}
+.galaxy-stage{height: min(64vh,560px);min-height:390px;overflow:hidden;touch-action:none;position:relative;background-image:radial-gradient(1px 1px at 15% 25%,#fff 50%,transparent 100%),radial-gradient(1px 1px at 72% 18%,#a9d9ff 50%,transparent 100%),radial-gradient(2px 2px at 43% 74%,#fff 50%,transparent 100%),radial-gradient(1px 1px at 88% 82%,#b7aaff 50%,transparent 100%);background-size:173px 151px,211px 197px,251px 223px,193px 181px}
+.galaxy-stage svg{width:100%;height:100%;display:block;overflow:visible;user-select:none}
+.galaxy-links line{stroke:#4775bc;stroke-width:1.3;opacity:.48}
+.galaxy-node{cursor:pointer;outline:none}
+.galaxy-node circle{stroke-width:1.7;filter:drop-shadow(0 0 7px currentColor)}
+.galaxy-node text{fill:#eaf4ff;font-size:10px;text-anchor:middle;pointer-events:none}
+.galaxy-node:focus circle,.galaxy-node.selected circle{stroke:#fff;stroke-width:3}
+.galaxy-detail{margin:10px 12px 12px;padding:13px;border:1px solid #33436f;border-radius:14px;background:#101a34;color:#e8f1ff;min-height:88px}
+.galaxy-detail small{color:#9eafd1}
+.galaxy-status{font-size:11px;color:#ffd58b;border:1px solid #755b32;border-radius:99px;padding:5px 9px}
+.galaxy-legend{display:flex;gap:12px;flex-wrap:wrap;padding:0 13px 12px;color:#aab9d6;font-size:11px}
+.galaxy-dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:5px}
+@media(max-width:420px){.galaxy-stage{height:440px;min-height:440px}.galaxy-node text{font-size:9px}}
+
 </style>
 </head>
 <body>
@@ -68,6 +88,29 @@ footer{text-align:center;color:#68748a;font-size:11px;margin-top:28px}
   <p class="notice">Passing this checklist is a planning aid, not proof of technical safety or production readiness.</p>
  </div>
 </section>
+
+<section id="galaxy" class="view">
+ <div class="eyebrow">STARNET OVERVIEW</div><h1>Galaxy Command</h1>
+ <p class="muted">Explore the planned studio hierarchy. Select a node to inspect its role and approval boundary.</p>
+ <div class="row between" style="margin:12px 0"><span class="galaxy-status">● VISUAL PREVIEW · BACKEND NOT CONNECTED</span><span class="small">35 fleet roles</span></div>
+ <div class="galaxy-shell">
+  <div class="galaxy-toolbar" id="galaxyFilters">
+   <button class="selected" data-filter="All">All</button><button data-filter="Music">Music</button><button data-filter="Media">Media</button><button data-filter="Racing">Racing</button>
+   <span style="flex:1"></span><button id="galaxyZoomOut" aria-label="Zoom out">−</button><button id="galaxyZoomIn" aria-label="Zoom in">＋</button><button id="galaxyReset">Center</button>
+  </div>
+  <div class="galaxy-stage" id="galaxyStage" aria-label="Interactive agent hierarchy map">
+   <svg id="galaxySvg" viewBox="0 0 720 620" role="img" aria-label="Planned studio hierarchy">
+    <defs><radialGradient id="nebula"><stop stop-color="#263d79" stop-opacity=".48"/><stop offset="1" stop-color="#080d20" stop-opacity="0"/></radialGradient></defs>
+    <ellipse cx="360" cy="310" rx="340" ry="300" fill="url(#nebula)"/>
+    <g id="galaxyWorld"></g>
+   </svg>
+  </div>
+  <div class="galaxy-detail" id="galaxyDetail"><strong>Command overview</strong><p style="margin:6px 0">Tap a node to inspect its mission, permissions and current planning status.</p><small>No live messages or agent activity are being simulated.</small></div>
+  <div class="galaxy-legend"><span><i class="galaxy-dot" style="background:#ffd36a"></i>Owner / command</span><span><i class="galaxy-dot" style="background:#63d9ff"></i>Oversight</span><span><i class="galaxy-dot" style="background:#a78bfa"></i>Music</span><span><i class="galaxy-dot" style="background:#f472b6"></i>Media</span><span><i class="galaxy-dot" style="background:#6ee7a8"></i>Racing</span></div>
+ </div>
+ <div class="notice" style="margin-top:12px">Connections show the planned reporting hierarchy only. Live communication pulses will appear only after the real Quinn / STARNet event stream is connected.</div>
+</section>
+
 <section id="settings" class="view">
  <div class="eyebrow">PREFERENCES</div><h1>Settings</h1>
  <div class="panel">
@@ -81,10 +124,12 @@ footer{text-align:center;color:#68748a;font-size:11px;margin-top:28px}
 </main>
 <nav>
 <button class="active" data-go="home"><span>⌂</span>Home</button>
+<button data-go="galaxy"><span>✧</span>Galaxy</button>
 <button data-go="chat"><span>◉</span>Chat</button>
 <button data-go="projects"><span>▣</span>Projects</button>
 <button data-go="agents"><span>✳</span>Agents</button>
 <button data-go="settings"><span>⚙</span>Settings</button>
 </nav>
 <script src="app.js"></script>
+<script src="galaxy.js"></script>
 </body></html>
