@@ -4,7 +4,7 @@
 // This is a pure configuration gate, NOT a listener, TLS implementation,
 // authenticator, durable replay store, audit sink, or production security boundary.
 
-const LOOPBACK_HOSTS = new Set(["127.0.0.1", "::1", "localhost"]);
+const LOOPBACK_HOSTS = new Set(["127.0.0.1", "::1"]);
 
 const REQUIRED_TRUE_FLAGS = Object.freeze([
   "tlsConfigured",
