@@ -67,3 +67,13 @@ V1.2 DEVELOPMENT DOCUMENTS
 - v12-organization.js — command roles and floor dashboards.
 
 V1.2 organization dashboards are planning views, not running agent consoles. The PC bridge is design-only and has not been connected.
+
+V1.2 AGENT WORKSPACES
+- v12-workspaces.js adds local work proposals assigned to a canonical agent and same-floor manager.
+- Proposals capture scope, acceptance criteria, priority and an optional prerequisite.
+- Local workflow states: PROPOSED, ASSIGNED, IN_PROGRESS, READY_FOR_VALIDATION, ACCEPTED and CHANGES_REQUESTED.
+- A prerequisite must be accepted before a dependent proposal can be locally assigned.
+- The independent validation workspace requires reviewer-entered evidence and blocks a reviewer name that exactly matches the recorded builder name.
+- Reviewer identity is not authenticated; this is a workflow guard, not proof of independence.
+- No work is dispatched and no agent is started by these controls.
+- Workspace records are stored separately under mobile-ai-studio-v1.2-workspaces.
