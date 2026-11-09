@@ -78,7 +78,7 @@ test("nonce ledger expires entries after its TTL", () => {
   assert.equal(ledger.consume("device-00000001", "nonce_0123456789abcdef", NOW + 1001), true);
 });
 test("does not allow a caller to claim its own scopes in the envelope", () => {
-  const forged = envelope({ action: "ADMIN_PAIRING", scopes: ["ADMIN_PAIRING"] });
+  const forged = envelope({ action: "ADMIN_PAIRING", scopes: ["ADMIN_PAIRING"], args: { operation: "list_devices" } });
   assert.equal(validateRequest(forged, principal, new NonceLedger(), NOW).code, "INSUFFICIENT_SCOPE");
   // Authorization comes only from the trusted principal; envelope scopes are ignored.
 });
