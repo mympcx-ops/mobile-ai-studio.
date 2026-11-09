@@ -1,0 +1,21 @@
+"use strict";
+const test=require("node:test");
+const assert=require("node:assert/strict");
+const {REQUIRED_ACCEPTANCE_CHECKS,buildAgentPackage,recordIndependentReview,validateAgentPackage,validateBlueprint}=require("../agent-factory/contract.cjs");
+function catalog(){return {agents:[{id:"music-arranger",name:"MIDI Arranger",floor:"Music",manager:"Creative Director",mission:"Arrange MIDI parts.",responsibilities:"Create editable arrangements.",lifecycleStatus:"PLANNED",builderStatus:"NOT_STARTED",validationStatus:"NOT_RUN",dependencies:["Music Floor Director"],toolsSkills:[],knowledgeSources:[],permissionProfile:{localRead:true,localWrite:false,externalNetwork:false,execute:false,publish:false,deploy:false,humanApprovalRequired:true}}],managers:[{id:"creative",name:"Creative Director",floor:"Music",manages:["MIDI Arranger"]}]};}
+function makePackage(){const r=buildAgentPackage({agentId:"music-arranger",catalog:catalog(),builderId:"builder-1",builderLabel:"Factory Builder",scopeNotes:"Blueprint only."});assert.equal(r.ok,true);return {package:r.package};}
+function checks(status="PASS"){return REQUIRED_ACCEPTANCE_CHECKS.map(checkId=>({checkId,status}));}
+function evidence(){return REQUIRED_ACCEPTANCE_CHECKS.map((id,i)=>({reference:"evidence-"+(i+1),description:"Recorded result for "+id}));}
+test("builds canonical blueprint without executable capabilities",()=>{const r=buildAgentPackage({agentId:"music-arranger",catalog:catalog(),builderId:"b1",builderLabel:"Builder"});assert.equal(r.ok,true);assert.equal(r.package.packageStatus,"BUILT_PENDING_INDEPENDENT_VALIDATION");assert.equal(r.package.safety.executable,false);assert.equal(r.package.safety.dispatchEnabled,false);assert.equal(r.package.safety.ownerApprovalRequiredForActivation,true);});
+test("rejects unknown agent",()=>assert.equal(buildAgentPackage({agentId:"unknown",catalog:catalog(),builderId:"b1",builderLabel:"Builder"}).code,"UNKNOWN_AGENT"));
+test("requires builder attribution",()=>assert.equal(buildAgentPackage({agentId:"music-arranger",catalog:catalog()}).code,"BUILDER_IDENTITY_REQUIRED"));
+test("rejects canonical identity substitution",()=>assert.equal(validateBlueprint({...catalog().agents[0],name:"Different"},catalog()).code,"CANONICAL_IDENTITY_MISMATCH"));
+test("rejects lifecycle activation",()=>assert.equal(validateBlueprint({...catalog().agents[0],lifecycleStatus:"ACTIVE"},catalog()).code,"LIFECYCLE_CHANGE_FORBIDDEN"));
+test("rejects forged validation status",()=>assert.equal(validateBlueprint({...catalog().agents[0],validationStatus:"PASS"},catalog()).code,"VALIDATION_STATUS_FORGERY"));
+test("rejects prohibited capabilities",()=>assert.equal(validateBlueprint({...catalog().agents[0],permissionProfile:{...catalog().agents[0].permissionProfile,execute:true}},catalog()).code,"FORBIDDEN_CAPABILITY"));
+test("validates package integrity and policy",()=>assert.equal(validateAgentPackage(makePackage(),catalog()).ok,true));
+test("detects package tampering",()=>{const p=makePackage();p.package.agent.mission="Tampered";assert.equal(validateAgentPackage(p,catalog()).code,"PACKAGE_INTEGRITY_MISMATCH");});
+test("rejects self-review",()=>assert.equal(recordIndependentReview({agentPackage:makePackage(),catalog:catalog(),reviewerId:"builder-1",reviewerLabel:"Builder",checks:checks(),evidence:evidence()}).code,"REVIEWER_NOT_INDEPENDENT"));
+test("requires all checks to pass",()=>assert.equal(recordIndependentReview({agentPackage:makePackage(),catalog:catalog(),reviewerId:"r2",reviewerLabel:"Validator",checks:checks("NOT_RUN"),evidence:evidence()}).code,"VALIDATION_INCOMPLETE_OR_FAILED"));
+test("requires sufficient evidence",()=>assert.equal(recordIndependentReview({agentPackage:makePackage(),catalog:catalog(),reviewerId:"r2",reviewerLabel:"Validator",checks:checks(),evidence:evidence().slice(0,2)}).code,"INSUFFICIENT_EVIDENCE"));
+test("records review pending Owner approval, never activation",()=>{const r=recordIndependentReview({agentPackage:makePackage(),catalog:catalog(),reviewerId:"r2",reviewerLabel:"Independent Validator",checks:checks(),evidence:evidence()});assert.equal(r.ok,true);assert.equal(r.review.outcome,"PASS_RECORDED_PENDING_OWNER_APPROVAL");assert.equal(r.review.activationAuthorized,false);assert.equal(r.review.ownerApprovalRequired,true);});
