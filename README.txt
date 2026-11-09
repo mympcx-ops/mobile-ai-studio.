@@ -94,3 +94,10 @@ V1.5 SECURE PC HOST FOUNDATION
 - Wildcard/LAN binds are rejected. Agent dispatch and remote execution are always forbidden by this policy.
 - POLICY_CHECKS_SATISFIED_NOT_STARTED means only that supplied config values satisfy the reference checklist; it does not mean a service is running or controls are technically implemented.
 - tests/host-policy.test.cjs covers the fail-closed policy. No listener, pairing, credential store, telemetry endpoint, Quinn/Ollama connection or execution path exists.
+
+
+V1.6 SECURE DEVICE PAIRING AND READ-ONLY HEALTH DESIGN
+- docs/V1.6_DEVICE_PAIRING_PROTOCOL_AND_CREDENTIAL_LIFECYCLE.md defines one-time challenge requirements, Owner-bound enrollment, per-device credential lifecycle, revocation, rotation, protected storage, and fail-closed behavior. Design only; no pairing or credentials are implemented.
+- docs/V1.6_READ_ONLY_HEALTH_AUTHORIZATION_AND_RECOVERY.md defines the proposed minimum READ_STATUS / READ_HEALTH scope, truthful freshness labels, and safe reconnect behavior. Design only; no live health endpoint exists.
+- Pairing and health access remain disabled. No agent dispatch, project writes, telemetry stream, shell, process launch, or remote execution is authorized.
+- V1.6 review gates remain open; independent security review and physical Android testing are not complete.
