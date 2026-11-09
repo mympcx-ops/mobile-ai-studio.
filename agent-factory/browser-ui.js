@@ -40,12 +40,26 @@ function render(){
  list.innerHTML=state.packages.length?state.packages.map(p=>'<div class="item"><strong>'+esc(p.agent.name)+'</strong><small>'+esc(p.packageStatus)+' · '+esc(p.packageId)+'</small></div>').join(""):'<div class="empty">No packages built yet.</div>';
  const p=selectedPackage();$("afPreview").textContent=p?JSON.stringify(p,null,2):"Select or build a package to preview its JSON.";
 }
+function instructionFor(agent){
+ const c=catalog(),manager=c.managers.find(m=>m.name===agent.manager&&m.floor===agent.floor),director=c.oversight.find(x=>x.floor===agent.floor&&x.role==="Floor Director"),validator=c.oversight.find(x=>x.floor===agent.floor&&x.role==="Independent Validator");
+ return {templateVersion:"1.0.0",agentId:agent.id,role:agent.name,floor:agent.floor,reportsTo:manager?.name||agent.manager,floorDirector:director?.name||agent.floor+" Floor Director",independentValidator:validator?.name||agent.floor+" Independent Validator",systemInstruction:[
+ "You are "+agent.name+", a planned specialist agent in the "+agent.floor+" floor of Mobile AI Studio.",
+ "MISSION: "+agent.mission,
+ "RESPONSIBILITIES: "+agent.responsibilities,
+ "REPORTING: Report work proposals and findings to "+(manager?.name||agent.manager)+"; escalate through "+(director?.name||agent.floor+" Floor Director")+". Independent review is performed by "+(validator?.name||"the floor Independent Validator")+".",
+ "PERMISSIONS: Planning and read-only analysis only. No command execution, process launch, file modification, arbitrary path access, external network, publishing, deployment, agent dispatch, or credential access.",
+ "APPROVAL: Never represent a proposal as approved or completed. Escalate consequential actions to the Owner. Independent validation must be separate from the builder.",
+ "TRUTHFULNESS: Distinguish observed evidence, user-provided information, assumptions, and recommendations. Never invent test results or completion status.",
+ "OUTPUT: Return status, summary, deliverables, evidence, assumptions, risks, blockers, and approvalRequired.",
+ "LIFECYCLE: This instruction package is a blueprint. It does not authorize activation or execution."
+ ].join(String.fromCharCode(10)),outputContract:{requiredFields:["status","summary","deliverables","evidence","assumptions","risks","blockers","approvalRequired"],mustDistinguishEvidenceFromInference:true},capabilities:{toolExecution:false,filesystemWrite:false,externalNetwork:false,agentDispatch:false,publish:false,deploy:false,credentialAccess:false,ownerApprovalRequired:true}};
+}
 async function build(){
  const agent=catalog().agents.find(a=>a.id===$("afAgent").value),builderId=$("afBuilderId").value.trim(),builderLabel=$("afBuilderLabel").value.trim();
  if(!agent||!builderId||!builderLabel){$("afBuildStatus").textContent="Select an agent and enter builder ID and display label.";return;}
  if(!catalog().managers.some(m=>m.name===agent.manager&&m.floor===agent.floor)){ $("afBuildStatus").textContent="Blocked: canonical manager/floor relationship is invalid.";return;}
  const blueprint=JSON.parse(JSON.stringify(agent));blueprint.lifecycleStatus="PLANNED";blueprint.builderStatus="BUILT_PENDING_VALIDATION";blueprint.validationStatus="NOT_RUN";blueprint.permissionProfile={...PROFILE};
- const body={factoryVersion:"1.0.0",packageType:"AGENT_BLUEPRINT_ONLY",packageStatus:"BUILT_PENDING_INDEPENDENT_VALIDATION",agent:blueprint,provenance:{builderId,builderLabel,builtAt:new Date().toISOString(),scopeNotes:$("afScope").value.trim()},acceptanceChecks:CHECKS.map(([checkId])=>({checkId,status:"NOT_RUN"})),safety:{executable:false,dispatchEnabled:false,externalWritesEnabled:false,publishEnabled:false,deployEnabled:false,secretsIncluded:false,ownerApprovalRequiredForActivation:true}};
+ const body={factoryVersion:"1.0.0",packageType:"AGENT_BLUEPRINT_ONLY",packageStatus:"BUILT_PENDING_INDEPENDENT_VALIDATION",agent:blueprint,agentInstruction:instructionFor(blueprint),provenance:{builderId,builderLabel,builtAt:new Date().toISOString(),scopeNotes:$("afScope").value.trim()},acceptanceChecks:CHECKS.map(([checkId])=>({checkId,status:"NOT_RUN"})),safety:{executable:false,dispatchEnabled:false,externalWritesEnabled:false,publishEnabled:false,deployEnabled:false,secretsIncluded:false,ownerApprovalRequiredForActivation:true}};
  try{const integritySha256=await fingerprint(body);const pkg={packageId:"AGENT-PKG-"+Date.now(),...body,integritySha256};state.packages.unshift(pkg);if(save()){$("afPackage").value=pkg.packageId;render();$("afBuildStatus").textContent="Blueprint built. Status: pending independent validation. No agent was started.";} }catch(e){$("afBuildStatus").textContent=e.message;}
 }
 async function review(){
