@@ -77,3 +77,13 @@ V1.2 AGENT WORKSPACES
 - Reviewer identity is not authenticated; this is a workflow guard, not proof of independence.
 - No work is dispatched and no agent is started by these controls.
 - Workspace records are stored separately under mobile-ai-studio-v1.2-workspaces.
+
+V1.3 / V1.4 BRIDGE FOUNDATION STATUS
+- V1.3 adds a phone-side voice/typed command surface, local notifications, pairing requirements display, and a truthful PC/Quinn/Ollama/telemetry status panel. These controls do not connect to or execute work on the PC.
+- bridge/contract.cjs defines a reference request validator and in-memory replay guard. It is not a production security boundary.
+- V1.4 adds bridge/simulator.cjs, an in-process simulator with no network listener, filesystem access, model access, telemetry access, agent dispatch, or execution.
+- READ_STATUS returns SIMULATOR_ONLY / NOT_CONNECTED labels; READ_PROJECT uses synthetic metadata; PROPOSE_TASK and PROPOSE_ACTION create in-memory PROPOSED_NOT_DISPATCHED records; ADMIN_PAIRING is not implemented.
+- tests/bridge-contract.test.cjs and tests/bridge-simulator.test.cjs are run by the Node 22 GitHub Actions workflow via node --test tests/*.test.cjs.
+- V1.3 independent security review and Android acceptance documents are review/test packets only; no reviewer sign-off or physical Android test is claimed.
+- No live PC listener, TLS pairing, durable replay store, credential storage, authenticated telemetry, Quinn/Ollama connection, remote push, agent dispatch, or remote execution is implemented.
+- PR #6 remains draft and unmerged. Main and the published deployment remain untouched.
