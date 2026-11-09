@@ -55,6 +55,7 @@ document.addEventListener("click",e=>{
  if(b.dataset.ccTask){const t=data.tasks.find(x=>x.id===Number(b.dataset.ccTask));if(t)t.status=t.status==="DONE"?"OPEN":"DONE";save();return;}
  if(b.dataset.ccApproval){const a=data.approvals.find(x=>x.id===Number(b.dataset.ccApproval));if(!a||a.status!=="PENDING")return;const decision=b.dataset.decision;if(!confirm("Record "+decision+" for this proposal? This only records your decision locally; it does not execute or activate anything."))return;a.status=decision;a.decidedAt=new Date().toISOString();save();}
 });
+window.clearCommandCenterData=()=>{data={...blank};render();};
 window.addEventListener("online",renderHealth);window.addEventListener("offline",renderHealth);window.addEventListener("load",renderValidation);
 render();
 })();
