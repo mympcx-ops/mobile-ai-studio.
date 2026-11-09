@@ -109,3 +109,12 @@ V1.7 SYNTHETIC PAIRING AND READ-ONLY AUTHORIZATION HARNESS
 - docs/V1.7_SYNTHETIC_PAIRING_AND_AUTHORIZATION_HARNESS.md documents coverage and implementation gates.
 - This is a test harness only: no cryptography, challenge secret, credential, TLS, network listener, persistence, Android Keystore, PC/Quinn/Ollama access, agent dispatch, or execution.
 - All simulator health states are explicitly SIMULATOR_ONLY. V1.7 does not enable live pairing or host access.
+
+
+V1.8 PHONE-TO-PC TRANSPORT AND SECURITY ARCHITECTURE
+- docs/V1.8_PHONE_TO_PC_TRANSPORT_AND_TRUST_BOUNDARY.md explains why PC loopback cannot be reached from the phone and defines the gated evaluation of same-LAN HTTPS versus a private overlay path.
+- docs/V1.8_THREAT_MODEL_AND_SECURITY_ACCEPTANCE.md defines the read-only connection threat model, abuse cases, minimum controls, evidence requirements and explicit live-trial gates.
+- Browser PWA key storage is not represented as Android Keystore or hardware-backed protection. A native key broker/shell remains an evaluation option if physical Android testing shows the PWA cannot meet the security requirements.
+- No transport has been selected for deployment. No listener, LAN bind, firewall rule, VPN/overlay, certificate, credential, cryptographic implementation, durable replay store, or live health endpoint has been created.
+- Host remains disabled and loopback-only by default. No public exposure, Quinn/Ollama connection, agent dispatch, or remote execution is enabled or authorized.
+- V1.8 is architecture and threat-model documentation only; all physical-device, independent-review, and Owner approval gates remain open.
