@@ -187,3 +187,76 @@ test("diagnostics prove the harness has no real security or host capabilities", 
   assert.equal(d.agentDispatch, false);
   assert.equal(d.execution, false);
 });
+
+
+test("closing pairing window invalidates every outstanding challenge", () => {
+  const { sim } = setup();
+  sim.openPairingWindow({ ownerApproved: true });
+  const issued = sim.issueChallenge({
+    deviceId: DEVICE,
+    publicKeyFingerprint: FINGERPRINT,
+    requestedScopes: ["READ_STATUS"]
+  });
+  assert.equal(issued.ok, true);
+  sim.closePairingWindow();
+  assert.equal(sim.submitProof({ challengeId: issued.challengeId, proofValid: true }).code, "CHALLENGE_UNKNOWN_OR_CONSUMED");
+  assert.equal(sim.getDevice(DEVICE), null);
+});
+
+test("a device cannot accumulate multiple simultaneously pending challenges", () => {
+  const { sim } = setup();
+  sim.openPairingWindow({ ownerApproved: true });
+  const request = {
+    deviceId: DEVICE,
+    publicKeyFingerprint: FINGERPRINT,
+    requestedScopes: ["READ_STATUS"]
+  };
+  assert.equal(sim.issueChallenge(request).ok, true);
+  assert.equal(sim.issueChallenge(request).code, "DEVICE_CHALLENGE_ALREADY_PENDING");
+});
+
+test("an active device cannot silently replace its enrollment with a new pending challenge", () => {
+  const { sim } = setup();
+  enroll(sim);
+  const result = sim.issueChallenge({
+    deviceId: DEVICE,
+    publicKeyFingerprint: FINGERPRINT,
+    requestedScopes: ["READ_STATUS"]
+  });
+  assert.equal(result.code, "DEVICE_ALREADY_ENROLLED");
+  assert.equal(sim.getDevice(DEVICE).state, "ACTIVE_READ_ONLY");
+});
+
+test("a revoked device must complete a fresh Owner-gated enrollment before access returns", () => {
+  const { sim } = setup();
+  enroll(sim);
+  sim.revokeDevice({ deviceId: DEVICE, ownerApproved: true });
+  assert.equal(sim.authorizeHealthRead({ deviceId: DEVICE }).code, "DEVICE_NOT_ACTIVE");
+  const issued = sim.issueChallenge({
+    deviceId: DEVICE,
+    publicKeyFingerprint: FINGERPRINT,
+    requestedScopes: ["READ_STATUS"]
+  });
+  assert.equal(issued.ok, true);
+  assert.equal(sim.submitProof({ challengeId: issued.challengeId, proofValid: true }).state, "OWNER_REVIEW_PENDING");
+  assert.equal(sim.authorizeHealthRead({ deviceId: DEVICE }).code, "DEVICE_NOT_ACTIVE");
+  assert.equal(sim.approveEnrollment({ deviceId: DEVICE, ownerApproved: true }).state, "ACTIVE_READ_ONLY");
+});
+
+test("pending pairing challenge count is bounded", () => {
+  const { sim } = setup();
+  sim.openPairingWindow({ ownerApproved: true });
+  for (let i = 0; i < 100; i += 1) {
+    const result = sim.issueChallenge({
+      deviceId: "android-device-" + String(i).padStart(4, "0"),
+      publicKeyFingerprint: FINGERPRINT,
+      requestedScopes: ["READ_STATUS"]
+    });
+    assert.equal(result.ok, true);
+  }
+  assert.equal(sim.issueChallenge({
+    deviceId: "android-device-overflow",
+    publicKeyFingerprint: FINGERPRINT,
+    requestedScopes: ["READ_STATUS"]
+  }).code, "PAIRING_CAPACITY_REACHED");
+});
