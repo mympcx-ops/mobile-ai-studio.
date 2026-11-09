@@ -95,6 +95,11 @@ footer{text-align:center;color:#68748a;font-size:11px;margin-top:28px}
   <div class="panel" style="margin-top:9px"><input id="ccApprovalTitle" class="field" placeholder="Proposal requiring your decision"><textarea id="ccApprovalReason" class="field" style="margin-top:8px" placeholder="Scope, risks, evidence and requested action"></textarea><button id="ccAddApproval" class="primary" style="width:100%;margin-top:8px">＋ Submit for human review</button></div>
   <div id="ccApprovalList" class="panel section"></div>
  </div>
+ <div class="section"><div class="section-head"><h2>Validation</h2><span class="small">Evidence register</span></div>
+  <div class="notice">Record human review evidence here. This log does not independently verify reviewer identity, execute tests, or certify an agent as production-ready.</div>
+  <div class="panel" style="margin-top:9px"><select id="ccValidationRole" class="field"><option value="">Select a role after the fleet loads</option></select><input id="ccValidator" class="field" style="margin-top:8px" placeholder="Independent reviewer name / role"><select id="ccValidationOutcome" class="field" style="margin-top:8px"><option value="NOT_RUN">Not run</option><option value="PASS">Pass recorded</option><option value="NEEDS_WORK">Needs work</option><option value="BLOCKED">Blocked</option></select><textarea id="ccValidationEvidence" class="field" style="margin-top:8px" placeholder="Test cases, evidence links or findings"></textarea><button id="ccSaveValidation" class="primary" style="width:100%;margin-top:8px">＋ Save validation record</button></div>
+  <div id="ccValidationList" class="panel section"></div>
+ </div>
  <div class="section"><div class="section-head"><h2>System Health</h2><button id="ccRefreshHealth">Refresh</button></div>
   <div id="ccHealth" class="panel"></div>
  </div>
