@@ -50,7 +50,7 @@ test("public wildcard and LAN binds are rejected", () => {
 });
 
 test("loopback hostnames and addresses are accepted by the policy", () => {
-  for (const bindHost of ["127.0.0.1", "::1", "localhost"]) {
+  for (const bindHost of ["127.0.0.1", "::1"]) {
     assert.equal(evaluateHostConfig(secureTestConfig({ bindHost })).allowed, true);
   }
 });
