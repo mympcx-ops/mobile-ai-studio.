@@ -18,8 +18,8 @@ main{max-width:760px;margin:auto;padding:22px 16px 110px}.eyebrow{color:var(--ac
 .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}.tile,.panel{background:linear-gradient(160deg,#1a2130,#131823);border:1px solid var(--line);border-radius:18px;padding:16px}.tile{min-height:124px;text-align:left;color:var(--text);cursor:pointer}.tile:active,button:active{transform:scale(.985)}.tile .ico{font-size:22px}.tile h3{margin:12px 0 4px;font-size:15px}.tile p{margin:0;color:var(--muted);font-size:12px;line-height:1.4}
 .section{margin-top:24px}.section-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}.section h2{font-size:17px;margin:0}.small{font-size:12px;color:var(--muted)}
 button,.btn{border:1px solid var(--line);background:var(--panel2);color:var(--text);border-radius:12px;padding:10px 13px;font:inherit;cursor:pointer}.primary{background:var(--accent);border-color:var(--accent);color:#10131b;font-weight:750}.quiet{background:transparent}
-nav{position:fixed;z-index:8;bottom:0;left:0;right:0;padding:9px 8px calc(9px + env(safe-area-inset-bottom));background:#10141fee;backdrop-filter:blur(18px);border-top:1px solid var(--line);display:flex;justify-content:center;gap:4px}
-nav button{flex:1;max-width:150px;border:0;background:transparent;color:var(--muted);font-size:11px;padding:8px 2px}nav button.active{color:var(--text);background:#252d40;border-radius:12px}nav span{display:block;font-size:19px;margin-bottom:3px}
+nav{position:fixed;z-index:8;bottom:0;left:0;right:0;padding:9px 8px calc(9px + env(safe-area-inset-bottom));background:#10141fee;backdrop-filter:blur(18px);border-top:1px solid var(--line);display:flex;justify-content:flex-start;gap:4px;overflow-x:auto}
+nav button{flex:0 0 62px;max-width:150px;border:0;background:transparent;color:var(--muted);font-size:11px;padding:8px 2px}nav button.active{color:var(--text);background:#252d40;border-radius:12px}nav span{display:block;font-size:19px;margin-bottom:3px}
 .view{display:none}.view.active{display:block}.row{display:flex;gap:8px;align-items:center}.between{justify-content:space-between}.field{width:100%;background:#0e131d;border:1px solid var(--line);color:var(--text);border-radius:12px;padding:12px;font:inherit;outline:none}.field:focus{border-color:var(--accent)}textarea.field{resize:vertical;min-height:90px}
 .chatlog{display:flex;flex-direction:column;gap:10px;min-height:240px;max-height:52vh;overflow:auto;margin:14px 0}.bubble{max-width:88%;padding:12px 14px;border-radius:16px;line-height:1.45;white-space:pre-wrap}.user{align-self:flex-end;background:#303b5a}.assistant{align-self:flex-start;background:var(--panel2);border:1px solid var(--line)}.notice{font-size:12px;color:var(--muted);line-height:1.45;background:#111722;border:1px solid var(--line);border-radius:12px;padding:11px}
 .item{padding:13px 0;border-bottom:1px solid var(--line)}.item:last-child{border:0}.item strong{display:block}.item small{color:var(--muted)}.empty{text-align:center;padding:26px 12px;color:var(--muted)}
@@ -172,7 +172,7 @@ footer{text-align:center;color:#68748a;font-size:11px;margin-top:28px}
   <div class="item"><strong>Data controls</strong><small>Export or clear this device's studio data.</small><div class="modal-actions"><button id="exportData">Export backup</button><button id="clearData">Clear local data</button></div></div>
  </div>
 </section>
-<footer>Mobile AI Studio · V1.0 · Local-first foundation</footer>
+<footer>Mobile AI Studio · V1.1 preview · V1.0 foundation preserved</footer>
 </main>
 <nav>
 <button data-go="command"><span>⌘</span>Command</button>
