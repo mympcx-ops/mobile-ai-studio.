@@ -118,3 +118,11 @@ V1.8 PHONE-TO-PC TRANSPORT AND SECURITY ARCHITECTURE
 - No transport has been selected for deployment. No listener, LAN bind, firewall rule, VPN/overlay, certificate, credential, cryptographic implementation, durable replay store, or live health endpoint has been created.
 - Host remains disabled and loopback-only by default. No public exposure, Quinn/Ollama connection, agent dispatch, or remote execution is enabled or authorized.
 - V1.8 is architecture and threat-model documentation only; all physical-device, independent-review, and Owner approval gates remain open.
+
+
+V1.9 AGENT FACTORY CORE
+- agent-factory/contract.cjs builds versioned blueprint-only packages from canonical agent definitions, enforces identity/floor/manager consistency and the least-privilege planning profile, and fingerprints package integrity.
+- tests/agent-factory.test.cjs covers canonical identity, unsafe capability rejection, lifecycle/validation status protection, package tampering, independent-review separation, acceptance checks and evidence requirements.
+- docs/V1.9_AGENT_FACTORY_CORE_AND_VALIDATION.md documents the factory contract and limitations.
+- Independent review can be recorded only as PASS_RECORDED_PENDING_OWNER_APPROVAL. Reviewer identity and evidence references are caller-supplied and not authenticated by this library.
+- This is the deterministic factory core, not model-powered agent generation or a running agent runtime. It does not activate, dispatch, execute, write projects, publish, deploy, or connect to Quinn/Ollama.
