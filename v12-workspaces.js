@@ -32,6 +32,7 @@ function inject(){
 document.addEventListener("click",e=>{
  const b=e.target.closest("button");if(!b)return;
  if(b.id==="v12WsCreate"){
+  let ext={};try{ext=JSON.parse(localStorage.getItem("mobile-ai-studio-v1.2-command-extensions")||"{}");}catch(e){}if(ext.globalFreeze)return alert("Owner HOLD is active. New work proposals are paused.");
   const c=catalog(),agent=c.agents.find(x=>x.id===$("v12WsAgent").value),manager=c.managers.find(x=>x.id===$("v12WsManager").value),title=$("v12WsTitle").value.trim();
   if(!title||!agent||!manager)return alert("Enter a title and select an agent and manager.");
   if(agent.floor!==manager.floor)return alert("The selected manager must belong to the agent's floor.");
@@ -40,6 +41,7 @@ document.addEventListener("click",e=>{
  }
  if(b.dataset.wsStatus){
   const t=data.assignments.find(x=>x.id===Number(b.dataset.wsId));if(!t)return;
+  let ext={};try{ext=JSON.parse(localStorage.getItem("mobile-ai-studio-v1.2-command-extensions")||"{}");}catch(e){}const targetAgent=catalog().agents.find(x=>x.id===t.agentId);if(ext.globalFreeze)return alert("Owner HOLD is active. Workflow advancement is paused.");if(targetAgent&&(ext.pausedFloors||[]).includes(targetAgent.floor))return alert("This agent floor is on local HOLD.");if((ext.pausedAgents||[]).includes(t.agentId))return alert("This agent is locally paused.");
   if(b.dataset.wsStatus==="ASSIGNED"&&t.dependsOn){const d=data.assignments.find(x=>x.id===t.dependsOn);if(d&&d.status!=="ACCEPTED")return alert("This proposal is blocked until its prerequisite is accepted.");}
   t.status=b.dataset.wsStatus;t.updated=new Date().toISOString();save();return;
  }
