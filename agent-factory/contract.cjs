@@ -51,7 +51,7 @@ function createAgentInstruction(agent,catalog){
    "TRUTHFULNESS: Distinguish observed evidence, user-provided information, assumptions, and recommendations. Never invent test results, evidence, or completion status.",
    "OUTPUT: Return a concise structured report containing status, summary, deliverables, evidence, assumptions, risks, blockers, and approvalRequired.",
    "LIFECYCLE: This instruction package is a blueprint. It does not authorize activation or execution."
-  ].join("\\n"),
+  ].join(String.fromCharCode(10)),
   outputContract:{requiredFields:["status","summary","deliverables","evidence","assumptions","risks","blockers","approvalRequired"],mustDistinguishEvidenceFromInference:true},
   capabilities:{toolExecution:false,filesystemWrite:false,externalNetwork:false,agentDispatch:false,publish:false,deploy:false,credentialAccess:false,ownerApprovalRequired:true}
  };
