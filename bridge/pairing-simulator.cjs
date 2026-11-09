@@ -92,13 +92,13 @@ function createPairingSimulator(options = {}) {
     if (!challenge || challenge.state !== "CHALLENGE_ISSUED") {
       return result(false, "REJECTED", "CHALLENGE_UNKNOWN_OR_CONSUMED");
     }
-    if (!pairingWindow || pairingWindow.closesAt <= clock()) {
-      challenge.state = "CLOSED";
-      return result(false, "CLOSED", "PAIRING_WINDOW_CLOSED");
-    }
     if (challenge.expiresAt <= clock()) {
       challenge.state = "EXPIRED";
       return result(false, "EXPIRED", "CHALLENGE_EXPIRED");
+    }
+    if (!pairingWindow || pairingWindow.closesAt <= clock()) {
+      challenge.state = "CLOSED";
+      return result(false, "CLOSED", "PAIRING_WINDOW_CLOSED");
     }
     // proofValid is a synthetic test input, never a cryptographic verification.
     challenge.state = "CONSUMED";
