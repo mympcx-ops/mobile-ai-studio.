@@ -58,3 +58,12 @@ NOT YET IMPLEMENTED
 - Server-side authorization, identity verification or independent validation execution.
 
 Do not merge or publish a release until the complete V1.2 scope has been implemented, tested and explicitly approved by the Owner.
+
+V1.2 DEVELOPMENT DOCUMENTS
+- docs/V1.2_LIVE_COMMAND_STATION_PLAN.md — phased architecture and scope.
+- docs/V1.2_ANDROID_QA_ACCEPTANCE_MATRIX.md — physical-device test plan; not yet executed.
+- docs/V1.2_SECURE_PC_BRIDGE_ARCHITECTURE.md — pairing, permissions, threat model and approval design; design only.
+- v12-operations.js — local task, HOLD, draft communications, approval records and audit log.
+- v12-organization.js — command roles and floor dashboards.
+
+V1.2 organization dashboards are planning views, not running agent consoles. The PC bridge is design-only and has not been connected.
