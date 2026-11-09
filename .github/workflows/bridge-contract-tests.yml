@@ -1,25 +1,25 @@
-name: Bridge contract security tests
+name: Bridge contract and simulator tests
 
 on:
   pull_request:
     paths:
       - "bridge/**"
-      - "tests/bridge-contract.test.cjs"
+      - "tests/**"
       - ".github/workflows/bridge-contract-tests.yml"
   push:
     branches:
       - "feature/v1.2-live-command-station"
     paths:
       - "bridge/**"
-      - "tests/bridge-contract.test.cjs"
+      - "tests/**"
       - ".github/workflows/bridge-contract-tests.yml"
 
 permissions:
   contents: read
 
 jobs:
-  bridge-contract:
-    name: Node bridge contract tests
+  bridge-tests:
+    name: Node bridge contract and simulator tests
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
@@ -29,5 +29,5 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "22"
-      - name: Run contract tests
-        run: node --test tests/bridge-contract.test.cjs
+      - name: Run all bridge tests
+        run: node --test tests/*.test.cjs
