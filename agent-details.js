@@ -63,7 +63,6 @@ function open(id){
  const duties=record.responsibilities|| (record.manages?"Coordinates and supervises the listed direct reports.":record.kind==="Owner"?"Final human approval authority.":"See role mission and reporting chain.");
  const note=isAgent?"Definition text is an initial draft requiring Owner review. The record is planned only; this view does not mean an agent is running.": "This is a planned organizational role. Live backend status is not connected.";
  const ops=(()=>{try{return JSON.parse(localStorage.getItem("mobile-ai-studio-v1.2-workspaces")||'{"assignments":[],"reviews":[]}')}catch(e){return {assignments:[],reviews:[]}}})();
- const isAgent=!!record.responsibilities;
  const assigned=ops.assignments.filter(t=>isAgent?t.agentId===record.id:t.managerId===record.id);
  const workHtml=assigned.length?assigned.map(t=>'<div class="ad-grid"><b>'+esc(t.title)+'</b><span>'+esc(t.status)+' · '+esc(t.priority)+'</span></div>').join(""):'<p class="ad-copy">No local work proposals assigned yet.</p>';
  const workspaceButton=isAgent?'<button type="button" id="adOpenWorkspace" style="width:100%;margin-top:12px">Open agent workspace</button>':isManager?'<button type="button" id="adOpenWorkspace" style="width:100%;margin-top:12px">Open manager workspace</button>':'';
