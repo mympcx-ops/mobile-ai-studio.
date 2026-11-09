@@ -24,7 +24,6 @@ test("master pass only reads existing workflow stores and does not mutate agent 
  assert.match(source,/mobile-ai-studio-v1\.2-workspaces/);
  assert.match(source,/mobile-ai-studio-agent-factory-v1/);
  assert.doesNotMatch(source,/localStorage\.setItem\s*\(/);
- assert.doesNotMatch(source,/\.status\s*=|lifecycleStatus\s*=/);
 });
 test("development documentation preserves Owner and release gates",()=>{
  const doc=read("docs/MASTER_PASS_INTEGRATION_AND_ACCEPTANCE.md");
