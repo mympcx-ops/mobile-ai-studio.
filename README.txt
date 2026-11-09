@@ -126,3 +126,8 @@ V1.9 AGENT FACTORY CORE
 - docs/V1.9_AGENT_FACTORY_CORE_AND_VALIDATION.md documents the factory contract and limitations.
 - Independent review can be recorded only as PASS_RECORDED_PENDING_OWNER_APPROVAL. Reviewer identity and evidence references are caller-supplied and not authenticated by this library.
 - This is the deterministic factory core, not model-powered agent generation or a running agent runtime. It does not activate, dispatch, execute, write projects, publish, deploy, or connect to Quinn/Ollama.
+
+- agent-factory/browser-ui.js adds a phone-first Agent Factory workbench to the Agent Directory: select a canonical agent, build a blueprint package, inspect its JSON, and record a separate evidence-backed review.
+- The browser workbench uses Web Crypto SHA-256 in the HTTPS secure context for package-integrity fingerprints. This fingerprint is not a signature or authentication mechanism.
+- The workbench is local phone-side planning/review only. Reviewer identity is self-entered and not authenticated; evidence references are not independently fetched. No model is called and no generated agent is executed.
+- GitHub Actions now syntax-checks the browser workbench and runs all Node contract, simulator and factory tests.
