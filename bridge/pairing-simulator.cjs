@@ -3,6 +3,8 @@
 // Synthetic pairing lifecycle harness for tests and UI prototyping only.
 // No cryptography, challenge secret, credential, network, persistence, or host access exists.
 const READ_ONLY_SCOPES = Object.freeze(["READ_STATUS", "READ_HEALTH"]);
+const MAX_PENDING_CHALLENGES = 100;
+const MAX_ENROLLED_DEVICES = 100;
 
 function createPairingSimulator(options = {}) {
   const clock = typeof options.clock === "function" ? options.clock : () => Date.now();
@@ -28,6 +30,9 @@ function createPairingSimulator(options = {}) {
 
   function closePairingWindow() {
     pairingWindow = null;
+    for (const challenge of challenges.values()) {
+      if (challenge.state === "CHALLENGE_ISSUED") challenge.state = "CLOSED";
+    }
     return result(true, "CLOSED", "SIMULATED_WINDOW_CLOSED");
   }
 
@@ -39,6 +44,22 @@ function createPairingSimulator(options = {}) {
     }
     if (typeof deviceId !== "string" || !/^[A-Za-z0-9._:-]{8,128}$/.test(deviceId)) {
       return result(false, "CLOSED", "INVALID_DEVICE_ID");
+    }
+    const existingDevice = devices.get(deviceId);
+    if (existingDevice && existingDevice.state !== "REVOKED" && existingDevice.state !== "REJECTED") {
+      return result(false, "CLOSED", "DEVICE_ALREADY_ENROLLED");
+    }
+    for (const pending of challenges.values()) {
+      if (pending.deviceId === deviceId && pending.state === "CHALLENGE_ISSUED") {
+        return result(false, "CLOSED", "DEVICE_CHALLENGE_ALREADY_PENDING");
+      }
+    }
+    const pendingCount = [...challenges.values()].filter(item => item.state === "CHALLENGE_ISSUED").length;
+    if (pendingCount >= MAX_PENDING_CHALLENGES) {
+      return result(false, "CLOSED", "PAIRING_CAPACITY_REACHED");
+    }
+    if (!existingDevice && devices.size >= MAX_ENROLLED_DEVICES) {
+      return result(false, "CLOSED", "DEVICE_CAPACITY_REACHED");
     }
     if (typeof publicKeyFingerprint !== "string" || !/^[A-Fa-f0-9:]{32,128}$/.test(publicKeyFingerprint)) {
       return result(false, "CLOSED", "INVALID_PUBLIC_KEY_FINGERPRINT");
@@ -70,6 +91,10 @@ function createPairingSimulator(options = {}) {
     const challenge = challenges.get(challengeId);
     if (!challenge || challenge.state !== "CHALLENGE_ISSUED") {
       return result(false, "REJECTED", "CHALLENGE_UNKNOWN_OR_CONSUMED");
+    }
+    if (!pairingWindow || pairingWindow.closesAt <= clock()) {
+      challenge.state = "CLOSED";
+      return result(false, "CLOSED", "PAIRING_WINDOW_CLOSED");
     }
     if (challenge.expiresAt <= clock()) {
       challenge.state = "EXPIRED";
@@ -172,4 +197,4 @@ function createPairingSimulator(options = {}) {
   });
 }
 
-module.exports = { READ_ONLY_SCOPES, createPairingSimulator };
+module.exports = { READ_ONLY_SCOPES, MAX_PENDING_CHALLENGES, MAX_ENROLLED_DEVICES, createPairingSimulator };
