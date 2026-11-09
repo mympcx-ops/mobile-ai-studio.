@@ -9,16 +9,16 @@ const indexHtml = fs.readFileSync(path.join(root, "index.html"), "utf8");
 const serviceWorker = fs.readFileSync(path.join(root, "sw.js"), "utf8");
 
 function localScripts(html) {
-  return [...html.matchAll(/<script\\b[^>]*\\bsrc=["']([^"']+)["'][^>]*>/gi)]
+  return [...html.matchAll(/<script\b[^>]*\bsrc=["']([^"']+)["'][^>]*>/gi)]
     .map(match => match[1])
-    .filter(src => !/^(?:[a-z]+:)?\\/\\//i.test(src) && !src.startsWith("data:"))
-    .map(src => src.replace(/^\\.\\//, "").split(/[?#]/, 1)[0]);
+    .filter(src => !/^(?:[a-z]+:)?\/\//i.test(src) && !src.startsWith("data:"))
+    .map(src => src.replace(/^\.\//, "").split(/[?#]/, 1)[0]);
 }
 
 function precachedFiles(source) {
-  const match = source.match(/const FILES\\s*=\\s*\\[([\\s\\S]*?)\\];/);
+  const match = source.match(/const FILES\s*=\s*\[([\s\S]*?)\];/);
   assert.ok(match, "service worker must declare its precache FILES list");
-  return [...match[1].matchAll(/["']([^"']+)["']/g)].map(item => item[1].replace(/^\\.\\//, ""));
+  return [...match[1].matchAll(/["']([^"']+)["']/g)].map(item => item[1].replace(/^\.\//, ""));
 }
 
 test("every local JavaScript entry loaded by the app is precached for offline use", () => {
@@ -30,7 +30,7 @@ test("every local JavaScript entry loaded by the app is precached for offline us
 });
 
 test("Agent Factory browser workbench is included in the offline shell", () => {
-  assert.match(indexHtml, /<script[^>]+src=["']agent-factory\\/browser-ui\\.js["']/i);
+  assert.match(indexHtml, /<script[^>]+src=["']agent-factory\/browser-ui\.js["']/i);
   assert.ok(precachedFiles(serviceWorker).includes("agent-factory/browser-ui.js"));
 });
 
