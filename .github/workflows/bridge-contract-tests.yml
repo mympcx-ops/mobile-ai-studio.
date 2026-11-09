@@ -6,6 +6,8 @@ on:
     paths:
       - "bridge/**"
       - "tests/**"
+      - "agent-factory/**"
+      - "index.html"
       - "README.txt"
       - ".github/workflows/bridge-contract-tests.yml"
   push:
@@ -14,6 +16,8 @@ on:
     paths:
       - "bridge/**"
       - "tests/**"
+      - "agent-factory/**"
+      - "index.html"
       - ".github/workflows/bridge-contract-tests.yml"
 
 permissions:
@@ -31,5 +35,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "22"
-      - name: Run all bridge tests
+      - name: Syntax-check phone Agent Factory UI
+        run: node --check agent-factory/browser-ui.js
+      - name: Run all bridge and factory tests
         run: node --test tests/*.test.cjs
