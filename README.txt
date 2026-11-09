@@ -101,3 +101,11 @@ V1.6 SECURE DEVICE PAIRING AND READ-ONLY HEALTH DESIGN
 - docs/V1.6_READ_ONLY_HEALTH_AUTHORIZATION_AND_RECOVERY.md defines the proposed minimum READ_STATUS / READ_HEALTH scope, truthful freshness labels, and safe reconnect behavior. Design only; no live health endpoint exists.
 - Pairing and health access remain disabled. No agent dispatch, project writes, telemetry stream, shell, process launch, or remote execution is authorized.
 - V1.6 review gates remain open; independent security review and physical Android testing are not complete.
+
+
+V1.7 SYNTHETIC PAIRING AND READ-ONLY AUTHORIZATION HARNESS
+- bridge/pairing-simulator.cjs provides an in-memory, deterministic lifecycle model for pairing-window approval, synthetic challenge issue/expiry/consumption, Owner enrollment approval/rejection, read-only scope checks, revocation, and health snapshot freshness/recovery.
+- tests/pairing-simulator.test.cjs exercises the lifecycle and fail-closed cases.
+- docs/V1.7_SYNTHETIC_PAIRING_AND_AUTHORIZATION_HARNESS.md documents coverage and implementation gates.
+- This is a test harness only: no cryptography, challenge secret, credential, TLS, network listener, persistence, Android Keystore, PC/Quinn/Ollama access, agent dispatch, or execution.
+- All simulator health states are explicitly SIMULATOR_ONLY. V1.7 does not enable live pairing or host access.
