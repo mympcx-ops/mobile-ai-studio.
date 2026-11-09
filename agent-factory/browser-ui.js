@@ -46,7 +46,7 @@ async function build(){
  if(!catalog().managers.some(m=>m.name===agent.manager&&m.floor===agent.floor)){ $("afBuildStatus").textContent="Blocked: canonical manager/floor relationship is invalid.";return;}
  const blueprint=JSON.parse(JSON.stringify(agent));blueprint.lifecycleStatus="PLANNED";blueprint.builderStatus="BUILT_PENDING_VALIDATION";blueprint.validationStatus="NOT_RUN";blueprint.permissionProfile={...PROFILE};
  const body={factoryVersion:"1.0.0",packageType:"AGENT_BLUEPRINT_ONLY",packageStatus:"BUILT_PENDING_INDEPENDENT_VALIDATION",agent:blueprint,provenance:{builderId,builderLabel,builtAt:new Date().toISOString(),scopeNotes:$("afScope").value.trim()},acceptanceChecks:CHECKS.map(([checkId])=>({checkId,status:"NOT_RUN"})),safety:{executable:false,dispatchEnabled:false,externalWritesEnabled:false,publishEnabled:false,deployEnabled:false,secretsIncluded:false,ownerApprovalRequiredForActivation:true}};
- try{const integritySha256=await fingerprint(body);const pkg={packageId:"AGENT-PKG-"+Date.now(),...body,integritySha256};state.packages.unshift(pkg);if(save())$("afBuildStatus").textContent="Blueprint built. Status: pending independent validation. No agent was started."; }catch(e){$("afBuildStatus").textContent=e.message;}
+ try{const integritySha256=await fingerprint(body);const pkg={packageId:"AGENT-PKG-"+Date.now(),...body,integritySha256};state.packages.unshift(pkg);if(save()){$("afPackage").value=pkg.packageId;render();$("afBuildStatus").textContent="Blueprint built. Status: pending independent validation. No agent was started.";} }catch(e){$("afBuildStatus").textContent=e.message;}
 }
 async function review(){
  const p=selectedPackage(),reviewerId=$("afReviewerId").value.trim(),reviewerLabel=$("afReviewerLabel").value.trim();
@@ -59,7 +59,7 @@ async function review(){
  try{
   const {packageId,integritySha256,...body}=p;if(await fingerprint(body)!==integritySha256){$("afReviewStatus").textContent="Blocked: package integrity check failed.";return;}
   const record={packageId,integritySha256,agentId:p.agent.id,reviewerId,reviewerLabel,reviewedAt:new Date().toISOString(),outcome:"PASS_RECORDED_PENDING_OWNER_APPROVAL",checks:CHECKS.map(([checkId])=>({checkId,status:"PASS"})),evidence:evidence.slice(0,CHECKS.length),limitations:["Reviewer identity is user-entered and not authenticated by this phone UI.","Evidence references are recorded, not independently fetched or verified.","This review does not activate, dispatch, publish, deploy or execute the agent."],ownerApprovalRequired:true,activationAuthorized:false};
-  state.reviews.unshift(record);p.packageStatus="PASS_RECORDED_PENDING_OWNER_APPROVAL";p.reviewId="REVIEW-"+Date.now();p.reviewSummary={reviewerLabel,outcome:record.outcome};if(save())$("afReviewStatus").textContent="Review recorded as pending Owner approval. Agent remains PLANNED and inactive.";
+  state.reviews.unshift(record);if(save())$("afReviewStatus").textContent="Review recorded as pending Owner approval. Agent remains PLANNED and inactive.";
  }catch(e){$("afReviewStatus").textContent=e.message;}
 }
 document.addEventListener("click",e=>{
