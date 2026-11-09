@@ -87,3 +87,10 @@ V1.3 / V1.4 BRIDGE FOUNDATION STATUS
 - V1.3 independent security review and Android acceptance documents are review/test packets only; no reviewer sign-off or physical Android test is claimed.
 - No live PC listener, TLS pairing, durable replay store, credential storage, authenticated telemetry, Quinn/Ollama connection, remote push, agent dispatch, or remote execution is implemented.
 - PR #6 remains draft and unmerged. Main and the published deployment remain untouched.
+
+V1.5 SECURE PC HOST FOUNDATION
+- bridge/host-policy.cjs is a pure fail-closed configuration policy evaluator; it is not a server or security boundary.
+- Host startup is disabled by default. The reference policy requires explicit enablement, literal IPv4/IPv6 loopback binding, a valid port, TLS, authenticated device middleware, durable replay protection, redacted audit sink and recorded Owner approval.
+- Wildcard/LAN binds are rejected. Agent dispatch and remote execution are always forbidden by this policy.
+- POLICY_CHECKS_SATISFIED_NOT_STARTED means only that supplied config values satisfy the reference checklist; it does not mean a service is running or controls are technically implemented.
+- tests/host-policy.test.cjs covers the fail-closed policy. No listener, pairing, credential store, telemetry endpoint, Quinn/Ollama connection or execution path exists.
