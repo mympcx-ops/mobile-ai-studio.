@@ -48,6 +48,12 @@ test("rejects generic shell, command, and path fields", () => {
     assert.equal(validateEnvelopeShape(envelope({ [field]: "whoami" }), NOW).code, "FORBIDDEN_GENERIC_EXECUTION_FIELD");
   }
 });
+test("rejects unexpected and invalid action-specific arguments", () => {
+  assert.equal(validateEnvelopeShape(envelope({ args: { shell: "whoami" } }), NOW).code, "INVALID_ARGUMENTS");
+  assert.equal(validateEnvelopeShape(envelope({ action: "READ_PROJECT", args: {} }), NOW).code, "INVALID_ARGUMENTS");
+  assert.equal(validateEnvelopeShape(envelope({ action: "READ_PROJECT", args: { projectId: "project-123", extra: true } }), NOW).code, "INVALID_ARGUMENTS");
+  assert.equal(validateEnvelopeShape(envelope({ action: "PROPOSE_ACTION", args: { title: "Change", summary: "Test", risk: "critical", rollbackPlan: "Undo" } }), NOW).code, "INVALID_ARGUMENTS");
+});
 test("rejects non-object arguments and oversized payloads", () => {
   assert.equal(validateEnvelopeShape(envelope({ args: [] }), NOW).code, "INVALID_ARGUMENTS");
   assert.equal(validateEnvelopeShape(envelope({ args: { data: "x".repeat(17000) } }), NOW).code, "ARGUMENTS_TOO_LARGE");
