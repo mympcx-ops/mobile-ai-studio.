@@ -15,15 +15,15 @@ const floorDefs=[
 {name:"Racing",x:570,color:colors.Racing,n:6,dir:"RACING DIRECTOR",val:"RACING VALIDATOR"}];
 const floors=floorDefs.map(f=>({...f,agents:(catalog?.agents||[]).filter(a=>a.floor===f.name),managers:(catalog?.managers||[]).filter(m=>m.floor===f.name)}));
 floors.forEach(f=>{
- add(f.name+"-director",f.dir,f.name,"Floor Director",f.name+" floor leadership; delegates work and reviews agent outputs.",f.x,280,"Director");
- add(f.name+"-validator",f.val,f.name,"Independent Validator","Independent review role; reports validation findings separately from the builder.",f.x,550,"Validator");
+ add(f.name.toLowerCase()+"-director",f.dir,f.name,"Floor Director",f.name+" floor leadership; delegates work and reviews agent outputs.",f.x,280,"Director");
+ add(f.name.toLowerCase()+"-validator",f.val,f.name,"Independent Validator","Independent review role; reports validation findings separately from the builder.",f.x,550,"Validator");
  const ms=f.managers.length?f.managers:[];
  ms.forEach((m,i)=>{const mx=f.x-((ms.length-1)*28)/2+i*28;add(m.id,m.name,f.name,"Manager","Manages: "+m.manages.join(", "),mx,330,"Manager");});
  f.agents.forEach((a,i)=>{const col=i%4,row=Math.floor(i/4);add(a.id,a.name,f.name,a.manager,a.mission,f.x-68+col*45,390+row*39,"Agent");});
 });
 const links=[];
 links.push(["owner","secretary"],["secretary","coo"]);
-floors.forEach(f=>{links.push(["coo",f.name+"-director"],[f.name+"-director",f.name+"-validator"]);f.managers.forEach(m=>{links.push([f.name+"-director",m.id]);m.manages.forEach(name=>{const a=f.agents.find(x=>x.name===name);if(a)links.push([m.id,a.id]);});});if(!f.managers.length)f.agents.forEach(a=>links.push([f.name+"-director",a.id]));});
+floors.forEach(f=>{links.push(["coo",f.name.toLowerCase()+"-director"],[f.name.toLowerCase()+"-director",f.name.toLowerCase()+"-validator"]);f.managers.forEach(m=>{links.push([f.name.toLowerCase()+"-director",m.id]);m.manages.forEach(name=>{const a=f.agents.find(x=>x.name===name);if(a)links.push([m.id,a.id]);});});if(!f.managers.length)f.agents.forEach(a=>links.push([f.name.toLowerCase()+"-director",a.id]));});
 let scale=1,tx=0,ty=0,activeFilter="All",selected="owner",drag=null,pinch=null;
 const positions=Object.fromEntries(nodes.map(n=>[n.id,n]));
 function el(tag,attrs={}){const e=document.createElementNS(NS,tag);Object.entries(attrs).forEach(([k,v])=>e.setAttribute(k,v));return e;}
