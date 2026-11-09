@@ -131,3 +131,4 @@ V1.9 AGENT FACTORY CORE
 - The browser workbench uses Web Crypto SHA-256 in the HTTPS secure context for package-integrity fingerprints. This fingerprint is not a signature or authentication mechanism.
 - The workbench is local phone-side planning/review only. Reviewer identity is self-entered and not authenticated; evidence references are not independently fetched. No model is called and no generated agent is executed.
 - GitHub Actions now syntax-checks the browser workbench and runs all Node contract, simulator and factory tests.
+- V1.9 blueprint packages now include a role-specific system-instruction specification: mission, responsibilities, manager/floor reporting, prohibited capabilities, truthful evidence handling, output contract and Owner approval boundary. This is a prompt artifact only; no model is called and no tools are granted.
