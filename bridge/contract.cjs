@@ -58,15 +58,15 @@ function validateEnvelopeShape(envelope, nowMs = Date.now()) {
   if (Math.abs(nowMs - envelope.timestamp) > MAX_CLOCK_SKEW_MS) return { ok: false, code: "STALE_TIMESTAMP" };
   if (typeof envelope.nonce !== "string" || !NONCE_RE.test(envelope.nonce)) return { ok: false, code: "INVALID_NONCE" };
   if (typeof envelope.action !== "string" || !Object.hasOwn(ACTION_SCOPES, envelope.action)) return { ok: false, code: "ACTION_NOT_ALLOWLISTED" };
+  if (Object.hasOwn(envelope, "shell") || Object.hasOwn(envelope, "command") || Object.hasOwn(envelope, "path")) {
+    return { ok: false, code: "FORBIDDEN_GENERIC_EXECUTION_FIELD" };
+  }
   if (!isPlainObject(envelope.args)) return { ok: false, code: "INVALID_ARGUMENTS" };
   let bytes;
   try { bytes = encodeURIComponent(JSON.stringify(envelope.args)).replace(/%[0-9A-F]{2}/g, "x").length; }
   catch { return { ok: false, code: "ARGUMENTS_NOT_SERIALIZABLE" }; }
   if (bytes > MAX_ARGUMENT_BYTES) return { ok: false, code: "ARGUMENTS_TOO_LARGE" };
   if (!validateActionArgs(envelope.action, envelope.args)) return { ok: false, code: "INVALID_ARGUMENTS" };
-  if (Object.hasOwn(envelope, "shell") || Object.hasOwn(envelope, "command") || Object.hasOwn(envelope, "path")) {
-    return { ok: false, code: "FORBIDDEN_GENERIC_EXECUTION_FIELD" };
-  }
   return { ok: true, requiredScope: ACTION_SCOPES[envelope.action] };
 }
 
