@@ -1,26 +1,60 @@
-MOBILE AI STUDIO V1.0
-=====================
+MOBILE AI STUDIO — V1.2 DEVELOPMENT BRANCH
+============================================
 
-WHAT THIS BUILD DOES
-- Mobile-first installable web app foundation.
-- Home, Chat, Projects, Agent Factory, Validation and Settings screens.
-- Projects, agent drafts and notes persist in this browser on this phone.
-- Export a JSON backup or clear local data.
-- Offline shell after the app has been opened online once and cached.
-- ChatGPT handoff opens https://chatgpt.com/ and copies prompts separately.
+PURPOSE
+Phone-first command station for the user's AI studio. The Android phone is the control surface; the PC is intended to host models, agent building, validation and approved backend work.
 
-IMPORTANT LIMITATIONS
-- This does NOT embed your ChatGPT subscription inside the app.
-- It does NOT call the OpenAI API and does not require an API key.
-- ChatGPT conversations are not automatically synchronized into this app.
-- Agent designs are drafts only; no agent execution or deployment.
-- Quinn is not connected.
-- To install as a PWA, publish these files to an HTTPS website first.
+CURRENT BRANCH STATE
+- V1.0 application foundation retained.
+- V1.1 local Command Center retained.
+- V1.2 local operations module added on feature/v1.2-live-command-station.
+- This is development work and is not merged or published to the live site.
 
-ANDROID INSTALL
-1. Publish the contents of this folder to an HTTPS host (for example, a static site host).
-2. Open the published HTTPS address in Chrome on Android.
-3. Open Chrome menu (three dots) > Install app or Add to Home screen.
-4. Confirm. The app icon will appear on your phone's home screen.
+CURRENT V1.2 LOCAL FEATURES
+- Local HOLD control: pauses new V1.2 task creation in this phone interface only. It does not stop PC processes.
+- Enhanced task register with owner, priority, due date, details and status.
+- Communications inbox for LOCAL DRAFT / NOT SENT messages.
+- Approval queue with risk and evidence fields; decisions are recorded only and never execute actions.
+- Timestamped local audit history for V1.2 operations events.
 
-Keep the exported JSON backup somewhere safe. Browser data can be lost if site data is cleared.
+ORGANIZATION
+- Preserve 29 agents plus six Floor Director / Independent Validator oversight roles.
+- Existing agent and Galaxy views describe planned roles and reporting relationships.
+- Role mission/responsibility wording is an initial draft and requires Owner review.
+- Agent lifecycle remains PLANNED; no agent execution is enabled.
+
+CONNECTION TRUTH
+- PC backend: NOT CONNECTED / NOT TESTED.
+- Quinn / Ollama: NOT CONNECTED.
+- Agent dispatch: NOT CONFIGURED.
+- Communications: LOCAL DRAFT / NOT SENT.
+- Approval records do not execute actions.
+
+SAFETY AND APPROVAL
+- No agents are activated by this app.
+- No external writes, publishing, deployment or autonomous execution are enabled.
+- Human approval is required before consequential actions.
+- Independent validation must be separate from the builder.
+
+STORAGE
+- V1.0 data uses localStorage key mobile-ai-studio-v1.
+- V1.1 Command Center data uses mobile-ai-studio-command-center-v1.1.
+- V1.2 operations data uses mobile-ai-studio-v1.2-operations.
+- Export a backup before clearing browser data. Existing V1.0/V1.1 keys are not intentionally overwritten by the V1.2 operations module.
+
+ANDROID TESTING REQUIRED
+1. Open the development branch deployment only after it is separately published for testing.
+2. Test Command Center, Galaxy, Directory and detail windows on Android Chrome.
+3. Test task creation, completion, local HOLD, draft messages, approval recording and audit history.
+4. Confirm data persists after closing and reopening the app.
+5. Verify offline shell behavior and service-worker update behavior.
+6. Confirm V1.0 projects, custom agent drafts and notes remain intact.
+
+NOT YET IMPLEMENTED
+- Secure authenticated PC backend bridge.
+- Live hardware/system telemetry.
+- Quinn/Ollama integration.
+- Live agent messaging or task dispatch.
+- Server-side authorization, identity verification or independent validation execution.
+
+Do not merge or publish a release until the complete V1.2 scope has been implemented, tested and explicitly approved by the Owner.
