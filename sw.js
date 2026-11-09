@@ -1,5 +1,5 @@
-const CACHE="mobile-ai-studio-shell-v10";
-const FILES=["./","./index.html","./command-center.js","./app.js","./agents.js","./agent-details.js","./galaxy.js","./v12-operations.js","./v12-organization.js","./v12-workspaces.js","./v12-readiness.js","./v12-command-extensions.js","./manifest.webmanifest","./icon.svg"];
+const CACHE="mobile-ai-studio-shell-v11";
+const FILES=["./","./index.html","./command-center.js","./app.js","./agents.js","./agent-details.js","./galaxy.js","./v12-operations.js","./v12-organization.js","./v12-workspaces.js","./v12-readiness.js","./v12-command-extensions.js","./v13-integration-foundation.js","./manifest.webmanifest","./icon.svg"];
 self.addEventListener("install",e=>e.waitUntil(caches.open(CACHE).then(c=>c.addAll(FILES)).then(()=>self.skipWaiting())));
 self.addEventListener("activate",e=>e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim())));
 self.addEventListener("fetch",e=>{if(e.request.method!=="GET")return;e.respondWith(caches.match(e.request).then(cached=>cached||fetch(e.request).then(response=>{const copy=response.clone();if(response.ok&&new URL(e.request.url).origin===self.location.origin)caches.open(CACHE).then(c=>c.put(e.request,copy));return response;}).catch(()=>caches.match("./index.html"))));});
