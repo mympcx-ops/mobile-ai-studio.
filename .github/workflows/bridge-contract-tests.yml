@@ -37,5 +37,7 @@ jobs:
           node-version: "22"
       - name: Syntax-check phone Agent Factory UI
         run: node --check agent-factory/browser-ui.js
+      - name: Syntax-check Master Pass UI
+        run: node --check master-pass.js
       - name: Run all bridge and factory tests
         run: node --test tests/*.test.cjs
