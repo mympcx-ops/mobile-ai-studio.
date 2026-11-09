@@ -69,7 +69,7 @@ function render(){
  if(!list||!summary||!detail)return;
  const saved=loadImported(),isImported=!!(saved&&saved.agents&&saved.agents.length===29);
  summary.innerHTML="<strong>"+agents.length+" agents</strong> · "+managers.length+" managers · "+oversight.length+" directors / validators · <span>"+(isImported?"Imported on this phone":"Ready to import")+"</span>";
- const records=[...agents,...oversight];
+ const records=[...agents,...oversight.map(o=>({...o,manager:o.reportsTo,responsibilities:o.mission,dependencies:[]}))];
  const shown=records.filter(a=>filter==="All"||a.floor===filter);
  list.innerHTML=shown.map(a=>"<button class='directory-card' data-agent-id='"+a.id+"'><span class='directory-floor'>"+esc(a.floor)+" · "+esc(a.manager||a.reportsTo||a.role)+"</span><strong>"+esc(a.name)+"</strong><small>"+esc(a.lifecycleStatus||a.status||"PLANNED")+" · "+esc(a.validationStatus||"NOT_RUN")+"</small></button>").join("");
  const current=records.find(a=>a.id===selected)||agents[0];
