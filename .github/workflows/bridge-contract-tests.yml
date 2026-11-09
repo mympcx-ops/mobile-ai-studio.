@@ -1,10 +1,12 @@
 name: Bridge contract and simulator tests
 
 on:
+  workflow_dispatch:
   pull_request:
     paths:
       - "bridge/**"
       - "tests/**"
+      - "README.txt"
       - ".github/workflows/bridge-contract-tests.yml"
   push:
     branches:
