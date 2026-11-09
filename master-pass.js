@@ -5,7 +5,7 @@ function read(key){try{const v=JSON.parse(localStorage.getItem(key)||"null");ret
 function catalog(){return window.MOBILE_AGENT_CATALOG||{agents:[],managers:[],oversight:[]};}
 function statusRows(){
  const c=catalog(),ops=read("mobile-ai-studio-v1.2-operations"),ws=read("mobile-ai-studio-v1.2-workspaces"),factory=read("mobile-ai-studio-agent-factory-v1");
- const storageOk=(()=>{try{const k="__mas_master_probe";localStorage.setItem(k,"1");localStorage.removeItem(k);return true;}catch(e){return false;}})();
+ const storageOk=(()=>{try{return typeof localStorage.length==="number";}catch(e){return false;}})();
  const assignments=Array.isArray(ws.assignments)?ws.assignments:[];
  const pending=(Array.isArray(ops.approvals)?ops.approvals:[]).filter(x=>x.status==="PENDING").length;
  const packages=Array.isArray(factory.packages)?factory.packages.length:0;
