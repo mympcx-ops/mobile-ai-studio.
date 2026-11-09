@@ -1,0 +1,43 @@
+name: Bridge contract and simulator tests
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - "bridge/**"
+      - "tests/**"
+      - "agent-factory/**"
+      - "index.html"
+      - "README.txt"
+      - ".github/workflows/bridge-contract-tests.yml"
+  push:
+    branches:
+      - "feature/v1.2-live-command-station"
+    paths:
+      - "bridge/**"
+      - "tests/**"
+      - "agent-factory/**"
+      - "index.html"
+      - ".github/workflows/bridge-contract-tests.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  bridge-tests:
+    name: Node bridge contract and simulator tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Syntax-check phone Agent Factory UI
+        run: node --check agent-factory/browser-ui.js
+      - name: Syntax-check Master Pass UI
+        run: node --check master-pass.js
+      - name: Run all bridge and factory tests
+        run: node --test tests/*.test.cjs

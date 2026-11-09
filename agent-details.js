@@ -62,7 +62,13 @@ function open(id){
  const mission=record.mission||"No mission description is recorded.";
  const duties=record.responsibilities|| (record.manages?"Coordinates and supervises the listed direct reports.":record.kind==="Owner"?"Final human approval authority.":"See role mission and reporting chain.");
  const note=isAgent?"Definition text is an initial draft requiring Owner review. The record is planned only; this view does not mean an agent is running.": "This is a planned organizational role. Live backend status is not connected.";
+ const ops=(()=>{try{return JSON.parse(localStorage.getItem("mobile-ai-studio-v1.2-workspaces")||'{"assignments":[],"reviews":[]}')}catch(e){return {assignments:[],reviews:[]}}})();
+ const assigned=ops.assignments.filter(t=>isAgent?t.agentId===record.id:t.managerId===record.id);
+ const workHtml=assigned.length?assigned.map(t=>'<div class="ad-grid"><b>'+esc(t.title)+'</b><span>'+esc(t.status)+' · '+esc(t.priority)+'</span></div>').join(""):'<p class="ad-copy">No local work proposals assigned yet.</p>';
+ const workspaceButton=isAgent?'<button type="button" id="adOpenWorkspace" style="width:100%;margin-top:12px">Open agent workspace</button>':isManager?'<button type="button" id="adOpenWorkspace" style="width:100%;margin-top:12px">Open manager workspace</button>':'';
  content.innerHTML='<span class="ad-status">'+esc(status.replaceAll("_"," "))+'</span><div class="ad-section"><h3>Mission</h3><p class="ad-copy">'+esc(mission)+'</p></div><div class="ad-section"><h3>Responsibilities</h3><p class="ad-copy">'+esc(duties)+'</p></div><div class="ad-section"><h3>Status &amp; permissions</h3><div class="ad-grid">'+rowHtml+'</div></div><p class="ad-foot">'+esc(note)+'</p>';
+ content.insertAdjacentHTML("beforeend",'<div class="ad-section"><h3>Work &amp; activity</h3>'+workHtml+workspaceButton+'<p class="ad-foot">Local proposals only. No task is dispatched and no agent is running.</p></div>');
+ const wsButton=content.querySelector("#adOpenWorkspace");if(wsButton)wsButton.addEventListener("click",()=>{close();if(window.openV12Workspace)window.openV12Workspace(isAgent?record.id:null,isManager?record.id:null);});
  overlay.classList.add("open");overlay.setAttribute("aria-hidden","false");overlay.querySelector(".ad-close").focus();
 }
 window.openAgentDetails=open;window.closeAgentDetails=close;

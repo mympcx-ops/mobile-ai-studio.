@@ -77,9 +77,10 @@ footer{text-align:center;color:#68748a;font-size:11px;margin-top:28px}
  <div class="section"><div class="section-head"><h2>Workspace status</h2><span class="small">V1.0</span></div><div class="panel"><div class="row between"><span>Phone storage</span><span class="small" style="color:var(--green)">Available</span></div><div class="row between" style="margin-top:12px"><span>GPT connection</span><span class="small">Via ChatGPT app</span></div><div class="row between" style="margin-top:12px"><span>Quinn / local computer</span><span class="small">Not connected</span></div></div></div>
 </section>
 <section id="command" class="view">
- <div class="eyebrow">V1.1 · PHONE CONTROL CENTER</div><h1>Command Center</h1>
+ <div class="eyebrow">V1.2 · LIVE COMMAND STATION</div><h1>Command Center</h1>
  <p class="muted">Local planning workspace. This phone is the control surface; the PC backend and Quinn are not connected.</p>
  <div class="row between" style="margin:12px 0"><span class="galaxy-status">● LOCAL / PLANNING ONLY</span><span class="small">35-role organization</span></div>
+ <div id="masterPassBoard" class="section" aria-live="polite"></div>
  <div id="ccMetrics" class="grid"></div>
  <div class="section"><div class="section-head"><h2>Tasks</h2><span class="small">Local task board</span></div>
   <div class="panel"><input id="ccTaskTitle" class="field" placeholder="Task title"><textarea id="ccTaskDetails" class="field" style="margin-top:8px" placeholder="Details, owner or next step"></textarea><div class="row" style="margin-top:8px"><select id="ccTaskPriority" class="field"><option>Normal</option><option>High</option><option>Low</option></select><button id="ccAddTask" class="primary">＋ Add task</button></div></div>
@@ -172,7 +173,7 @@ footer{text-align:center;color:#68748a;font-size:11px;margin-top:28px}
   <div class="item"><strong>Data controls</strong><small>Export or clear this device's studio data.</small><div class="modal-actions"><button id="exportData">Export backup</button><button id="clearData">Clear local data</button></div></div>
  </div>
 </section>
-<footer>Mobile AI Studio · V1.1 preview · V1.0 foundation preserved</footer>
+<footer>Mobile AI Studio · V1.2 development preview · V1.0 foundation preserved</footer>
 </main>
 <nav>
 <button data-go="command"><span>⌘</span>Command</button>
@@ -186,6 +187,14 @@ footer{text-align:center;color:#68748a;font-size:11px;margin-top:28px}
 <script src="command-center.js"></script>
 <script src="app.js"></script>
 <script src="agents.js"></script>
+<script src="agent-factory/browser-ui.js"></script>
 <script src="agent-details.js"></script>
 <script src="galaxy.js"></script>
+<script src="v12-operations.js"></script>
+<script src="v12-organization.js"></script>
+<script src="v12-workspaces.js"></script>
+<script src="v12-readiness.js"></script>
+<script src="v12-command-extensions.js"></script>
+<script src="v13-integration-foundation.js"></script>
+<script src="master-pass.js"></script>
 </body></html>
