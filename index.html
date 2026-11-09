@@ -68,12 +68,36 @@ footer{text-align:center;color:#68748a;font-size:11px;margin-top:28px}
 <section id="home" class="view active">
  <div class="hero"><div class="eyebrow">YOUR CREATIVE COMMAND CENTER</div><h1>Build something<br>brilliant.</h1><p class="muted">Your projects and agent designs stay on this phone. GPT is available through your existing ChatGPT app for now.</p></div>
  <div class="grid">
+  <button class="tile" data-go="command"><div class="ico">🛰️</div><h3>Command Center</h3><p>Overview, tasks, communications, approvals and system health.</p></button>
   <button class="tile" data-go="chat"><div class="ico">💬</div><h3>Chat workspace</h3><p>Prepare prompts and open ChatGPT.</p></button>
   <button class="tile" data-go="projects"><div class="ico">📁</div><h3>Projects</h3><p>Keep plans, notes and decisions together.</p></button>
   <button class="tile" data-go="agents"><div class="ico">🤖</div><h3>Agent Directory</h3><p>Import and inspect the canonical agent fleet.</p></button>
   <button class="tile" data-go="testing"><div class="ico">🧪</div><h3>Validation</h3><p>Review agent readiness before approval.</p></button>
  </div>
  <div class="section"><div class="section-head"><h2>Workspace status</h2><span class="small">V1.0</span></div><div class="panel"><div class="row between"><span>Phone storage</span><span class="small" style="color:var(--green)">Available</span></div><div class="row between" style="margin-top:12px"><span>GPT connection</span><span class="small">Via ChatGPT app</span></div><div class="row between" style="margin-top:12px"><span>Quinn / local computer</span><span class="small">Not connected</span></div></div></div>
+</section>
+<section id="command" class="view">
+ <div class="eyebrow">V1.1 · PHONE CONTROL CENTER</div><h1>Command Center</h1>
+ <p class="muted">Local planning workspace. This phone is the control surface; the PC backend and Quinn are not connected.</p>
+ <div class="row between" style="margin:12px 0"><span class="galaxy-status">● LOCAL / PLANNING ONLY</span><span class="small">35-role organization</span></div>
+ <div id="ccMetrics" class="grid"></div>
+ <div class="section"><div class="section-head"><h2>Tasks</h2><span class="small">Local task board</span></div>
+  <div class="panel"><input id="ccTaskTitle" class="field" placeholder="Task title"><textarea id="ccTaskDetails" class="field" style="margin-top:8px" placeholder="Details, owner or next step"></textarea><div class="row" style="margin-top:8px"><select id="ccTaskPriority" class="field"><option>Normal</option><option>High</option><option>Low</option></select><button id="ccAddTask" class="primary">＋ Add task</button></div></div>
+  <div id="ccTaskList" class="panel section"></div>
+ </div>
+ <div class="section"><div class="section-head"><h2>Communications</h2><span class="small">Local message log</span></div>
+  <div class="notice">These are saved notes and draft communications, not live messages to agents. No agent or Quinn connection is active.</div>
+  <div class="panel" style="margin-top:9px"><textarea id="ccMessage" class="field" placeholder="Record a decision, handoff, or communication draft"></textarea><button id="ccAddMessage" class="primary" style="width:100%;margin-top:8px">＋ Save communication note</button></div>
+  <div id="ccMessageList" class="panel section"></div>
+ </div>
+ <div class="section"><div class="section-head"><h2>Approvals</h2><span class="small">Human decision register</span></div>
+  <div class="notice">Approving here records your decision only. It does not activate agents, execute tools, publish, deploy, or perform external writes.</div>
+  <div class="panel" style="margin-top:9px"><input id="ccApprovalTitle" class="field" placeholder="Proposal requiring your decision"><textarea id="ccApprovalReason" class="field" style="margin-top:8px" placeholder="Scope, risks, evidence and requested action"></textarea><button id="ccAddApproval" class="primary" style="width:100%;margin-top:8px">＋ Submit for human review</button></div>
+  <div id="ccApprovalList" class="panel section"></div>
+ </div>
+ <div class="section"><div class="section-head"><h2>System Health</h2><button id="ccRefreshHealth">Refresh</button></div>
+  <div id="ccHealth" class="panel"></div>
+ </div>
 </section>
 <section id="chat" class="view">
  <div class="eyebrow">WORKSPACE 01</div><h1>Chat</h1><p class="muted">Draft here, then hand your prompt to the ChatGPT app. This does not use an API key.</p>
@@ -146,6 +170,7 @@ footer{text-align:center;color:#68748a;font-size:11px;margin-top:28px}
 <footer>Mobile AI Studio · V1.0 · Local-first foundation</footer>
 </main>
 <nav>
+<button data-go="command"><span>⌘</span>Command</button>
 <button class="active" data-go="home"><span>⌂</span>Home</button>
 <button data-go="galaxy"><span>✧</span>Galaxy</button>
 <button data-go="chat"><span>◉</span>Chat</button>
@@ -153,6 +178,7 @@ footer{text-align:center;color:#68748a;font-size:11px;margin-top:28px}
 <button data-go="agents"><span>✳</span>Agents</button>
 <button data-go="settings"><span>⚙</span>Settings</button>
 </nav>
+<script src="command-center.js"></script>
 <script src="app.js"></script>
 <script src="agents.js"></script>
 <script src="agent-details.js"></script>
