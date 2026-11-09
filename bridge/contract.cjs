@@ -23,6 +23,32 @@ function isPlainObject(value) {
   return proto === Object.prototype || proto === null;
 }
 
+function validateActionArgs(action, args) {
+  const keys = Object.keys(args);
+  const only = allowed => keys.every(key => allowed.includes(key));
+  const text = (value, max) => typeof value === "string" && value.trim().length > 0 && value.length <= max;
+  if (action === "READ_STATUS") return keys.length === 0;
+  if (action === "READ_PROJECT") return only(["projectId"]) && text(args.projectId, 128);
+  if (action === "PROPOSE_TASK") {
+    return only(["title", "description", "acceptanceCriteria"]) &&
+      text(args.title, 120) && text(args.description, 2000) &&
+      Array.isArray(args.acceptanceCriteria) && args.acceptanceCriteria.length > 0 &&
+      args.acceptanceCriteria.length <= 20 && args.acceptanceCriteria.every(item => text(item, 500));
+  }
+  if (action === "PROPOSE_ACTION") {
+    return only(["title", "summary", "risk", "rollbackPlan"]) &&
+      text(args.title, 120) && text(args.summary, 2000) &&
+      ["low", "medium", "high"].includes(args.risk) && text(args.rollbackPlan, 1000);
+  }
+  if (action === "ADMIN_PAIRING") {
+    return only(["operation", "deviceId"]) &&
+      ["list_devices", "begin_pairing", "revoke_device"].includes(args.operation) &&
+      (args.deviceId === undefined || text(args.deviceId, 128)) &&
+      (args.operation !== "revoke_device" || text(args.deviceId, 128));
+  }
+  return false;
+}
+
 function validateEnvelopeShape(envelope, nowMs = Date.now()) {
   if (!isPlainObject(envelope)) return { ok: false, code: "INVALID_ENVELOPE" };
   if (envelope.protocol !== "mobile-ai-studio-bridge/1") return { ok: false, code: "UNSUPPORTED_PROTOCOL" };
@@ -32,7 +58,7 @@ function validateEnvelopeShape(envelope, nowMs = Date.now()) {
   if (Math.abs(nowMs - envelope.timestamp) > MAX_CLOCK_SKEW_MS) return { ok: false, code: "STALE_TIMESTAMP" };
   if (typeof envelope.nonce !== "string" || !NONCE_RE.test(envelope.nonce)) return { ok: false, code: "INVALID_NONCE" };
   if (typeof envelope.action !== "string" || !Object.hasOwn(ACTION_SCOPES, envelope.action)) return { ok: false, code: "ACTION_NOT_ALLOWLISTED" };
-  if (!isPlainObject(envelope.args)) return { ok: false, code: "INVALID_ARGUMENTS" };
+  if (!isPlainObject(envelope.args) || !validateActionArgs(envelope.action, envelope.args)) return { ok: false, code: "INVALID_ARGUMENTS" };
   let bytes;
   try { bytes = encodeURIComponent(JSON.stringify(envelope.args)).replace(/%[0-9A-F]{2}/g, "x").length; }
   catch { return { ok: false, code: "ARGUMENTS_NOT_SERIALIZABLE" }; }
@@ -79,6 +105,7 @@ module.exports = {
   MAX_CLOCK_SKEW_MS,
   NONCE_TTL_MS,
   NonceLedger,
+  validateActionArgs,
   validateEnvelopeShape,
   validateRequest
 };
