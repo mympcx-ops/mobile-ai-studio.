@@ -34,7 +34,7 @@ function validateEnvelopeShape(envelope, nowMs = Date.now()) {
   if (typeof envelope.action !== "string" || !Object.hasOwn(ACTION_SCOPES, envelope.action)) return { ok: false, code: "ACTION_NOT_ALLOWLISTED" };
   if (!isPlainObject(envelope.args)) return { ok: false, code: "INVALID_ARGUMENTS" };
   let bytes;
-  try { bytes = Buffer.byteLength(JSON.stringify(envelope.args), "utf8"); }
+  try { bytes = new TextEncoder().encode(JSON.stringify(envelope.args)).length; }
   catch { return { ok: false, code: "ARGUMENTS_NOT_SERIALIZABLE" }; }
   if (bytes > MAX_ARGUMENT_BYTES) return { ok: false, code: "ARGUMENTS_TOO_LARGE" };
   if (Object.hasOwn(envelope, "shell") || Object.hasOwn(envelope, "command") || Object.hasOwn(envelope, "path")) {
