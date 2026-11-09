@@ -18,8 +18,8 @@ main{max-width:760px;margin:auto;padding:22px 16px 110px}.eyebrow{color:var(--ac
 .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}.tile,.panel{background:linear-gradient(160deg,#1a2130,#131823);border:1px solid var(--line);border-radius:18px;padding:16px}.tile{min-height:124px;text-align:left;color:var(--text);cursor:pointer}.tile:active,button:active{transform:scale(.985)}.tile .ico{font-size:22px}.tile h3{margin:12px 0 4px;font-size:15px}.tile p{margin:0;color:var(--muted);font-size:12px;line-height:1.4}
 .section{margin-top:24px}.section-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}.section h2{font-size:17px;margin:0}.small{font-size:12px;color:var(--muted)}
 button,.btn{border:1px solid var(--line);background:var(--panel2);color:var(--text);border-radius:12px;padding:10px 13px;font:inherit;cursor:pointer}.primary{background:var(--accent);border-color:var(--accent);color:#10131b;font-weight:750}.quiet{background:transparent}
-nav{position:fixed;z-index:8;bottom:0;left:0;right:0;padding:9px 8px calc(9px + env(safe-area-inset-bottom));background:#10141fee;backdrop-filter:blur(18px);border-top:1px solid var(--line);display:flex;justify-content:center;gap:4px}
-nav button{flex:1;max-width:150px;border:0;background:transparent;color:var(--muted);font-size:11px;padding:8px 2px}nav button.active{color:var(--text);background:#252d40;border-radius:12px}nav span{display:block;font-size:19px;margin-bottom:3px}
+nav{position:fixed;z-index:8;bottom:0;left:0;right:0;padding:9px 8px calc(9px + env(safe-area-inset-bottom));background:#10141fee;backdrop-filter:blur(18px);border-top:1px solid var(--line);display:flex;justify-content:flex-start;gap:4px;overflow-x:auto}
+nav button{flex:0 0 62px;max-width:150px;border:0;background:transparent;color:var(--muted);font-size:11px;padding:8px 2px}nav button.active{color:var(--text);background:#252d40;border-radius:12px}nav span{display:block;font-size:19px;margin-bottom:3px}
 .view{display:none}.view.active{display:block}.row{display:flex;gap:8px;align-items:center}.between{justify-content:space-between}.field{width:100%;background:#0e131d;border:1px solid var(--line);color:var(--text);border-radius:12px;padding:12px;font:inherit;outline:none}.field:focus{border-color:var(--accent)}textarea.field{resize:vertical;min-height:90px}
 .chatlog{display:flex;flex-direction:column;gap:10px;min-height:240px;max-height:52vh;overflow:auto;margin:14px 0}.bubble{max-width:88%;padding:12px 14px;border-radius:16px;line-height:1.45;white-space:pre-wrap}.user{align-self:flex-end;background:#303b5a}.assistant{align-self:flex-start;background:var(--panel2);border:1px solid var(--line)}.notice{font-size:12px;color:var(--muted);line-height:1.45;background:#111722;border:1px solid var(--line);border-radius:12px;padding:11px}
 .item{padding:13px 0;border-bottom:1px solid var(--line)}.item:last-child{border:0}.item strong{display:block}.item small{color:var(--muted)}.empty{text-align:center;padding:26px 12px;color:var(--muted)}
@@ -68,12 +68,41 @@ footer{text-align:center;color:#68748a;font-size:11px;margin-top:28px}
 <section id="home" class="view active">
  <div class="hero"><div class="eyebrow">YOUR CREATIVE COMMAND CENTER</div><h1>Build something<br>brilliant.</h1><p class="muted">Your projects and agent designs stay on this phone. GPT is available through your existing ChatGPT app for now.</p></div>
  <div class="grid">
+  <button class="tile" data-go="command"><div class="ico">🛰️</div><h3>Command Center</h3><p>Overview, tasks, communications, approvals and system health.</p></button>
   <button class="tile" data-go="chat"><div class="ico">💬</div><h3>Chat workspace</h3><p>Prepare prompts and open ChatGPT.</p></button>
   <button class="tile" data-go="projects"><div class="ico">📁</div><h3>Projects</h3><p>Keep plans, notes and decisions together.</p></button>
   <button class="tile" data-go="agents"><div class="ico">🤖</div><h3>Agent Directory</h3><p>Import and inspect the canonical agent fleet.</p></button>
   <button class="tile" data-go="testing"><div class="ico">🧪</div><h3>Validation</h3><p>Review agent readiness before approval.</p></button>
  </div>
  <div class="section"><div class="section-head"><h2>Workspace status</h2><span class="small">V1.0</span></div><div class="panel"><div class="row between"><span>Phone storage</span><span class="small" style="color:var(--green)">Available</span></div><div class="row between" style="margin-top:12px"><span>GPT connection</span><span class="small">Via ChatGPT app</span></div><div class="row between" style="margin-top:12px"><span>Quinn / local computer</span><span class="small">Not connected</span></div></div></div>
+</section>
+<section id="command" class="view">
+ <div class="eyebrow">V1.1 · PHONE CONTROL CENTER</div><h1>Command Center</h1>
+ <p class="muted">Local planning workspace. This phone is the control surface; the PC backend and Quinn are not connected.</p>
+ <div class="row between" style="margin:12px 0"><span class="galaxy-status">● LOCAL / PLANNING ONLY</span><span class="small">35-role organization</span></div>
+ <div id="ccMetrics" class="grid"></div>
+ <div class="section"><div class="section-head"><h2>Tasks</h2><span class="small">Local task board</span></div>
+  <div class="panel"><input id="ccTaskTitle" class="field" placeholder="Task title"><textarea id="ccTaskDetails" class="field" style="margin-top:8px" placeholder="Details, owner or next step"></textarea><div class="row" style="margin-top:8px"><select id="ccTaskPriority" class="field"><option>Normal</option><option>High</option><option>Low</option></select><button id="ccAddTask" class="primary">＋ Add task</button></div></div>
+  <div id="ccTaskList" class="panel section"></div>
+ </div>
+ <div class="section"><div class="section-head"><h2>Communications</h2><span class="small">Local message log</span></div>
+  <div class="notice">These are saved notes and draft communications, not live messages to agents. No agent or Quinn connection is active.</div>
+  <div class="panel" style="margin-top:9px"><textarea id="ccMessage" class="field" placeholder="Record a decision, handoff, or communication draft"></textarea><button id="ccAddMessage" class="primary" style="width:100%;margin-top:8px">＋ Save communication note</button></div>
+  <div id="ccMessageList" class="panel section"></div>
+ </div>
+ <div class="section"><div class="section-head"><h2>Approvals</h2><span class="small">Human decision register</span></div>
+  <div class="notice">Approving here records your decision only. It does not activate agents, execute tools, publish, deploy, or perform external writes.</div>
+  <div class="panel" style="margin-top:9px"><input id="ccApprovalTitle" class="field" placeholder="Proposal requiring your decision"><textarea id="ccApprovalReason" class="field" style="margin-top:8px" placeholder="Scope, risks, evidence and requested action"></textarea><button id="ccAddApproval" class="primary" style="width:100%;margin-top:8px">＋ Submit for human review</button></div>
+  <div id="ccApprovalList" class="panel section"></div>
+ </div>
+ <div class="section"><div class="section-head"><h2>Validation</h2><span class="small">Evidence register</span></div>
+  <div class="notice">Record human review evidence here. This log does not independently verify reviewer identity, execute tests, or certify an agent as production-ready.</div>
+  <div class="panel" style="margin-top:9px"><select id="ccValidationRole" class="field"><option value="">Select a role after the fleet loads</option></select><input id="ccValidator" class="field" style="margin-top:8px" placeholder="Independent reviewer name / role"><select id="ccValidationOutcome" class="field" style="margin-top:8px"><option value="NOT_RUN">Not run</option><option value="PASS">Pass recorded</option><option value="NEEDS_WORK">Needs work</option><option value="BLOCKED">Blocked</option></select><textarea id="ccValidationEvidence" class="field" style="margin-top:8px" placeholder="Test cases, evidence links or findings"></textarea><button id="ccSaveValidation" class="primary" style="width:100%;margin-top:8px">＋ Save validation record</button></div>
+  <div id="ccValidationList" class="panel section"></div>
+ </div>
+ <div class="section"><div class="section-head"><h2>System Health</h2><button id="ccRefreshHealth">Refresh</button></div>
+  <div id="ccHealth" class="panel"></div>
+ </div>
 </section>
 <section id="chat" class="view">
  <div class="eyebrow">WORKSPACE 01</div><h1>Chat</h1><p class="muted">Draft here, then hand your prompt to the ChatGPT app. This does not use an API key.</p>
@@ -143,9 +172,10 @@ footer{text-align:center;color:#68748a;font-size:11px;margin-top:28px}
   <div class="item"><strong>Data controls</strong><small>Export or clear this device's studio data.</small><div class="modal-actions"><button id="exportData">Export backup</button><button id="clearData">Clear local data</button></div></div>
  </div>
 </section>
-<footer>Mobile AI Studio · V1.0 · Local-first foundation</footer>
+<footer>Mobile AI Studio · V1.1 preview · V1.0 foundation preserved</footer>
 </main>
 <nav>
+<button data-go="command"><span>⌘</span>Command</button>
 <button class="active" data-go="home"><span>⌂</span>Home</button>
 <button data-go="galaxy"><span>✧</span>Galaxy</button>
 <button data-go="chat"><span>◉</span>Chat</button>
@@ -153,6 +183,7 @@ footer{text-align:center;color:#68748a;font-size:11px;margin-top:28px}
 <button data-go="agents"><span>✳</span>Agents</button>
 <button data-go="settings"><span>⚙</span>Settings</button>
 </nav>
+<script src="command-center.js"></script>
 <script src="app.js"></script>
 <script src="agents.js"></script>
 <script src="agent-details.js"></script>
