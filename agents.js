@@ -69,9 +69,10 @@ function render(){
  if(!list||!summary||!detail)return;
  const saved=loadImported(),isImported=!!(saved&&saved.agents&&saved.agents.length===29);
  summary.innerHTML="<strong>"+agents.length+" agents</strong> · "+managers.length+" managers · "+oversight.length+" directors / validators · <span>"+(isImported?"Imported on this phone":"Ready to import")+"</span>";
- const shown=agents.filter(a=>filter==="All"||a.floor===filter);
- list.innerHTML=shown.map(a=>"<button class='directory-card' data-agent-id='"+a.id+"'><span class='directory-floor'>"+esc(a.floor)+" · "+esc(a.manager)+"</span><strong>"+esc(a.name)+"</strong><small>PLANNED · NOT VALIDATED</small></button>").join("");
- const current=agents.find(a=>a.id===selected)||agents[0];
+ const records=[...agents,...oversight];
+ const shown=records.filter(a=>filter==="All"||a.floor===filter);
+ list.innerHTML=shown.map(a=>"<button class='directory-card' data-agent-id='"+a.id+"'><span class='directory-floor'>"+esc(a.floor)+" · "+esc(a.manager||a.reportsTo||a.role)+"</span><strong>"+esc(a.name)+"</strong><small>"+esc(a.lifecycleStatus||a.status||"PLANNED")+" · "+esc(a.validationStatus||"NOT_RUN")+"</small></button>").join("");
+ const current=records.find(a=>a.id===selected)||agents[0];
  if(current){detail.innerHTML="<div class='row between'><strong>"+esc(current.name)+"</strong><span class='directory-state'>PLANNED</span></div><p class='muted'>"+esc(current.mission)+"</p><div class='directory-meta'><b>Floor</b><span>"+esc(current.floor)+"</span><b>Manager</b><span>"+esc(current.manager)+"</span><b>Responsibilities</b><span>"+esc(current.responsibilities)+"</span><b>Permissions</b><span>Local read only; no execution, external writes, publishing or deployment. Human approval required.</span><b>Dependencies</b><span>"+current.dependencies.map(esc).join(" · ")+"</span><b>Builder</b><span>Not started</span><b>Independent validation</b><span>Not run</span></div>";}
  const btn=$("importCanonicalAgents");if(btn)btn.textContent=isImported?"Refresh canonical import":"Import 29 agents + 6 oversight roles";
 }
