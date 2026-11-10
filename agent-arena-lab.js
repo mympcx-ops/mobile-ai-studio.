@@ -20,7 +20,8 @@ function createChamber(agent,options){
 function recordObservation(chamber,scenarioId,outcome,observation,evidence,reviewer){
  if(!chamber||!Array.isArray(chamber.scenarios))throw new Error("A valid chamber is required.");
  const item=chamber.scenarios.find(s=>s.id===scenarioId);if(!item)throw new Error("Unknown scenario.");
- if(!STATUSES.includes(outcome)||outcome==="NOT_RUN")throw new Error("Choose PASS, FAIL or BLOCKED.");
+ if(!STATUSES.includes(outcome))throw new Error("Choose NOT_RUN, PASS, FAIL or BLOCKED.");
+ if(outcome==="NOT_RUN"){item.status="NOT_RUN";item.observation="";item.evidence="";item.reviewer="";chamber.updatedAt=now();chamber.status=evaluateChamber(chamber).status;return chamber;}
  const result=safe(observation),proof=safe(evidence);if(!result)throw new Error("Record the observed result before saving.");
  if(outcome==="PASS"&&!proof)throw new Error("A PASS requires an evidence reference.");
  item.status=outcome;item.observation=result;item.evidence=proof;item.reviewer=safe(reviewer);chamber.updatedAt=now();chamber.status=evaluateChamber(chamber).status;return chamber;
