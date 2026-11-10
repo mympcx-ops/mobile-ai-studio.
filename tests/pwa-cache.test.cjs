@@ -35,5 +35,12 @@ test("Agent Factory browser workbench is included in the offline shell", () => {
 });
 
 test("service worker cache version is bumped for the expanded shell", () => {
-  assert.match(serviceWorker, /const CACHE=["']mobile-ai-studio-shell-v14["']/);
+  assert.match(serviceWorker, /const CACHE=["']mobile-ai-studio-shell-v15["']/);
+});
+
+test("V2.1 command station assets are included in the offline shell", () => {
+  const cached = new Set(precachedFiles(serviceWorker));
+  assert.ok(cached.has("v2.1-studio-systems.js"));
+  assert.ok(cached.has("v2.1-command-station.css"));
+  assert.match(indexHtml, /v2\.1-command-station\.css/);
 });
