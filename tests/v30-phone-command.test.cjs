@@ -54,3 +54,18 @@ test("V3.0 docs preserve PC host and human approval boundaries",()=>{
  assert.match(spec,/No arbitrary shell/);
  assert.match(plan,/Authenticated phone-to-PC pairing \| Not implemented/);
 });
+
+test("V3.0 creates phone-authored agent drafts with enforced read-only permissions",()=>{
+ const api=loadApi();
+ const draft=api.createCustomAgentDraft({name:"Sample Builder",floor:"Music",manager:"Music Director",mission:"Design and document sound-pack workflows.",responsibilities:"Prepare structured sound design plans and review notes.",dependencies:"Requires Owner-approved source assets."});
+ assert.equal(draft.lifecycleStatus,"DRAFT_NOT_PACKAGED");
+ assert.equal(draft.canonicalFleetStatus,"NOT_ADDED");
+ assert.equal(draft.permissionProfile.localWrite,false);
+ assert.equal(draft.permissionProfile.execute,false);
+ assert.equal(draft.approval.activationAuthorized,false);
+ const out=api.exportCustomDraft(draft);
+ assert.equal(out.format,"mobile-ai-studio-custom-agent-draft/1");
+ assert.equal(out.receiverRequirements.autoActivate,false);
+ assert.throws(()=>api.createCustomAgentDraft({name:"x",floor:"Unknown",manager:"",mission:"short",responsibilities:"short"}),/Agent name/);
+ assert.throws(()=>api.exportCustomDraft({...draft,permissionProfile:{execute:true}}),/safety boundary/);
+});
