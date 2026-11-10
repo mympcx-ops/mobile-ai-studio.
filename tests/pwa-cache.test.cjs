@@ -3,6 +3,7 @@ const test = require("node:test");
 const assert = require("node:assert/strict");
 const fs = require("node:fs");
 const path = require("node:path");
+const { execFileSync } = require("node:child_process");
 
 const root = path.resolve(__dirname, "..");
 const indexHtml = fs.readFileSync(path.join(root, "index.html"), "utf8");
@@ -35,7 +36,18 @@ test("Agent Factory browser workbench is included in the offline shell", () => {
 });
 
 test("service worker cache version is bumped for the expanded shell", () => {
-  assert.match(serviceWorker, /const CACHE=["']mobile-ai-studio-shell-v15["']/);
+  assert.match(serviceWorker, /const CACHE=["']mobile-ai-studio-shell-v16["']/);
+});
+
+test("V2.2 Owner Approval Center and floor dashboards are included in the offline shell", () => {
+  const cached = new Set(precachedFiles(serviceWorker));
+  assert.ok(cached.has("v2.2-owner-floor-control.js"));
+  assert.ok(cached.has("v2.2-owner-floor-control.css"));
+  assert.match(indexHtml, /v2\.2-owner-floor-control\.js/);
+  assert.match(indexHtml, /v2\.2-owner-floor-control\.css/);
+  execFileSync(process.execPath, ["--check", path.join(root, "v2.2-owner-floor-control.js")]);
+  const source = fs.readFileSync(path.join(root, "v2.2-owner-floor-control.js"), "utf8");
+  assert.doesNotMatch(source, /fetch\s*\(|WebSocket\s*\(|EventSource\s*\(/);
 });
 
 test("V2.1 command station assets are included in the offline shell", () => {
