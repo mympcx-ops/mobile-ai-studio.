@@ -10,7 +10,7 @@ test("V2.3 owner operations overview is wired into the app and offline shell",()
  const html=read("index.html"),sw=read("sw.js");
  assert.match(html,/v2\.3-owner-operations\.css/);
  assert.match(html,/v2\.3-owner-operations\.js/);
- assert.match(sw,/mobile-ai-studio-shell-v17/);
+ assert.match(sw,/mobile-ai-studio-shell-v18/);
  assert.match(sw,/v2\.3-owner-operations\.js/);
  assert.match(sw,/v2\.3-owner-operations\.css/);
 });
@@ -57,6 +57,7 @@ test("V2.3.1 removes independently reviewed packages from the validation queue",
  assert.equal(api.readOnly,true);
 });
 test("V2.3.1 snapshots current local records and schedules refresh after lifecycle actions",()=>{
+ // Keep timer and event assertions bound to this isolated VM fixture.
  const runtime=runSnapshot({}, {agents:[]});
  const {api,values}=runtime;
  assert.equal(api.snapshot().pendingApprovals,0);
