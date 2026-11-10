@@ -36,6 +36,7 @@ function remove(sessionId,storage){
  const s=storage||root.localStorage,items=readAll(s).filter(x=>x.sessionId!==sessionId);s.setItem(STORE,JSON.stringify(items));return items;
 }
 function roster(){const c=root.MOBILE_AGENT_CATALOG||{};return [...(c.agents||[]),...(c.oversight||[])];}
+function countRoster(list){const rows=Array.isArray(list)?list:[],oversight=rows.filter(a=>a.role==="Floor Director"||a.role==="Independent Validator").length;return {agents:rows.length-oversight,oversight,managers:(root.MOBILE_AGENT_CATALOG?.managers||[]).length};}
 const esc=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 function readIdentityStore(){try{return JSON.parse(root.localStorage.getItem("mobile-ai-studio-agent-identities-v1")||"{}")}catch(e){return {}}}
 function avatarMarkup(agent){
@@ -59,7 +60,7 @@ function render(){
  const metrics=root.document&&root.document.getElementById("arenaCommandMetrics"),out=root.document&&root.document.getElementById("arenaCommandSessions");if(!metrics||!out)return;
  const agents=roster(),sessions=readAll(),pending=sessions.filter(s=>s.ownerDecision==="PENDING").length,accepted=sessions.filter(s=>s.ownerDecision==="ACCEPTED").length;
  const chambers=root.AgentArenaLab&&root.AgentArenaLab.readAll?root.AgentArenaLab.readAll():[];
- metrics.innerHTML=metric("Canonical agents",agents.filter(a=>!a.id.startsWith("oversight-")).length,"Planning roster")+metric("Oversight roles",agents.filter(a=>a.id.startsWith("oversight-")).length,"Director / Validator")+metric("Saved chambers",chambers.length,"Manual evidence records")+metric("Challenge proposals",sessions.length,""+pending+" awaiting Owner · "+accepted+" accepted locally");
+ metrics.innerHTML=(()=>{const counts=countRoster(agents);return metric("Canonical agents",counts.agents,"Planning roster")+metric("Oversight roles",counts.oversight,"Directors / Validators")+metric("Managers",counts.managers,"Reporting layer")+metric("Saved chambers",chambers.length,"Manual evidence records")+metric("Challenge proposals",sessions.length,""+pending+" awaiting Owner · "+accepted+" accepted locally")})();
  out.innerHTML=sessions.length?sessions.map(s=>'<article class="arena-command-session"><div class="row between"><strong>'+esc(s.title)+'</strong><span class="arena-plan-tag">'+esc(s.status.replaceAll("_"," "))+'</span></div><p>'+esc(s.mission)+'</p><div class="arena-command-duel">'+s.participants.map(p=>'<div>'+avatarMarkup({id:p.id,name:p.name,floor:p.floor,role:p.role})+'<span><strong>'+esc(p.name)+'</strong><small>'+esc(p.floor)+'</small></span></div>').join('<b class="arena-command-vs">VS</b>')+'</div><small class="muted">Focus: '+esc(s.scenarioLabel)+' · '+esc(new Date(s.createdAt).toLocaleString())+'</small>'+(s.ownerDecision==="PENDING"?'<div class="arena-command-actions"><button data-arena-decision="ACCEPT" data-session-id="'+esc(s.sessionId)+'" class="primary">Accept planning proposal</button><button data-arena-decision="DECLINE">Decline</button></div>':'<div class="arena-command-decision">Owner decision: '+esc(s.ownerDecision)+' · '+esc(s.ownerDecisionAt||"")+'</div>')+'<small class="arena-command-safety">Dispatch: disabled · Execution: not performed · Certification: not granted</small></article>').join(""):'<div class="empty">No challenge proposals yet. Create one above to start the Arena planning board.</div>';
 }
 function message(value){const el=root.document&&root.document.getElementById("arenaCommandMessage");if(el)el.textContent=value}
@@ -80,7 +81,7 @@ function bind(){
   }catch(err){message(err.message)}
  });
 }
-const api={STORE,SCENARIOS,createSession,decideSession,readAll,save,remove,render,init:function(){inject();bind();render()}};
+const api={STORE,SCENARIOS,createSession,decideSession,countRoster,readAll,save,remove,render,init:function(){inject();bind();render()}};
 root.AgentArenaCommand=api;if(typeof module!=="undefined"&&module.exports)module.exports=api;
 if(root.document){const start=()=>api.init();if(root.document.readyState==="loading")root.document.addEventListener("DOMContentLoaded",start);else start()}
 })(typeof window!=="undefined"?window:globalThis);
