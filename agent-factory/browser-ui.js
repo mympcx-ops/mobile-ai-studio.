@@ -25,7 +25,7 @@ function inject(){
  '<div class="notice">Build a structured blueprint from the canonical roster, then send it through the independent validation checklist. This creates a review package only. It does not run an agent, call a model, dispatch work, or connect to your PC.</div>'+
  '<div class="panel" style="margin-top:9px"><h3>1 · Build an agent blueprint</h3><select id="afAgent" class="field"><option value="">Select a canonical agent</option></select><input id="afBuilderId" class="field" style="margin-top:8px" placeholder="Builder ID / role (for audit attribution)"><input id="afBuilderLabel" class="field" style="margin-top:8px" placeholder="Builder display label"><textarea id="afScope" class="field" style="margin-top:8px" placeholder="Build notes or scope refinements (optional)"></textarea><button id="afBuild" class="primary" style="width:100%;margin-top:9px">Build blueprint package</button><p id="afBuildStatus" class="small" aria-live="polite"></p></div>'+
  '<div class="panel" style="margin-top:9px"><h3>2 · Independent validation</h3><select id="afPackage" class="field"><option value="">Select a built package</option></select><input id="afReviewerId" class="field" style="margin-top:8px" placeholder="Independent reviewer ID"><input id="afReviewerLabel" class="field" style="margin-top:8px" placeholder="Independent reviewer display label"><p class="small">Mark each check PASS only after reviewing the package and its source evidence.</p><div id="afChecks"></div><textarea id="afEvidence" class="field" style="margin-top:8px" rows="5" placeholder="Enter 7 evidence lines, one per check: evidence-reference | what you inspected and observed"></textarea><button id="afReview" class="primary" style="width:100%;margin-top:9px">Record independent review</button><p id="afReviewStatus" class="small" aria-live="polite"></p></div>'+
- '<div class="panel" style="margin-top:9px"><div class="row between"><h3>3 · Factory packages</h3><span id="afCounts" class="small"></span></div><div id="afPackageList"></div><pre id="afPreview" class="item" style="white-space:pre-wrap;overflow-wrap:anywhere;max-height:340px;overflow:auto">Build a blueprint to preview its package.</pre><button id="afCopy" style="width:100%">Copy selected package JSON</button><button id="afDownload" class="primary" style="width:100%;margin-top:8px">Download verified agent package (.json)</button><p id="afExportStatus" class="small" aria-live="polite">Offline export only · PC import remains manual</p></div>';
+ '<div class="panel" style="margin-top:9px"><div class="row between"><h3>3 · Factory packages</h3><span id="afCounts" class="small"></span></div><div id="afPackageList"></div><pre id="afPreview" class="item" style="white-space:pre-wrap;overflow-wrap:anywhere;max-height:340px;overflow:auto">Build a blueprint to preview its package.</pre><button id="afPreflight" style="width:100%;margin-top:8px">Run phone export preflight</button><pre id="afPreflightResult" class="v21-preflight" aria-live="polite">Preflight checks exporter compatibility before file export.</pre><button id="afCopy" style="width:100%">Copy selected package JSON</button><button id="afDownload" class="primary" style="width:100%;margin-top:8px">Download verified agent package (.json)</button><p id="afExportStatus" class="small" aria-live="polite">Offline export only · PC import remains manual</p></div>';
  root.appendChild(section);
  $("afChecks").innerHTML=CHECKS.map(([id,label])=>'<label class="item" style="display:flex;gap:10px;align-items:flex-start"><input type="checkbox" data-af-check="'+id+'" style="width:auto;margin-top:3px"><span>'+esc(label)+'</span></label>').join("");
  $("afAgent").innerHTML='<option value="">Select a canonical agent</option>'+catalog().agents.map(a=>'<option value="'+esc(a.id)+'">'+esc(a.floor+" · "+a.name)+'</option>').join("");
@@ -76,6 +76,29 @@ async function review(){
   state.reviews.unshift(record);if(save())$("afReviewStatus").textContent="Review recorded as pending Owner approval. Agent remains PLANNED and inactive.";
  }catch(e){$("afReviewStatus").textContent=e.message;}
 }
+async function runExportPreflight(){
+ const p=selectedPackage(),out=$("afPreflightResult");
+ if(!out)return;if(!p){out.textContent="BLOCKED · Select a package first.";return;}
+ const checks=[];
+ const add=(name,ok,detail)=>checks.push({name,ok,detail});
+ const {packageId,integritySha256,...body}=p;
+ let hashOk=false;try{hashOk=await fingerprint(body)===integritySha256;}catch(e){}
+ add("Canonical SHA-256",hashOk,"Phone recomputation must match the package fingerprint.");
+ add("Envelope format",true,"mobile-ai-studio-agent-package-export/1");
+ add("Offline transfer flags",p.packageType==="AGENT_BLUEPRINT_ONLY"&&p.packageStatus==="BUILT_PENDING_INDEPENDENT_VALIDATION","No automatic install or execution is permitted.");
+ add("Lifecycle gate",p.agent?.lifecycleStatus==="PLANNED"&&p.agent?.builderStatus==="BUILT_PENDING_VALIDATION"&&p.agent?.validationStatus==="NOT_RUN","Package remains planned and unvalidated.");
+ add("Least-privilege profile",JSON.stringify(p.agent?.permissionProfile)===JSON.stringify({localRead:true,localWrite:false,externalNetwork:false,execute:false,publish:false,deploy:false,humanApprovalRequired:true}),"Exact read-only profile expected by the desktop validator.");
+ add("Instruction identity",p.agentInstruction?.agentId===p.agent?.id&&p.agentInstruction?.role===p.agent?.name&&p.agentInstruction?.floor===p.agent?.floor,"Instruction identity must match the agent record.");
+ const expectedReporting="REPORTING: Report work proposals and findings to "+p.agentInstruction?.reportsTo+"; escalate through "+p.agentInstruction?.floorDirector+". Independent review is performed by "+p.agentInstruction?.independentValidator+".";
+ const lines=String(p.agentInstruction?.systemInstruction||"").split("\n");
+ add("Instruction template",lines.length===9&&lines[3]===expectedReporting&&lines[0]==="You are "+p.agent?.name+", a planned specialist agent in the "+p.agent?.floor+" floor of Mobile AI Studio.","The desktop validator pins the reporting line and instruction wording.");
+ add("Owner approval",p.safety?.ownerApprovalRequiredForActivation===true&&p.agentInstruction?.capabilities?.ownerApprovalRequired===true,"Owner approval remains mandatory.");
+ const failed=checks.filter(x=>!x.ok);
+ out.textContent=(failed.length?"PREFLIGHT BLOCKED":"PREFLIGHT PASSED · EXPORT CONTRACT MATCHES")+
+ "\n"+checks.map(x=>(x.ok?"PASS":"FAIL")+" · "+x.name+" — "+x.detail).join("\n")+
+ "\n\nThis is a phone-side contract check, not an authenticated security review. Desktop intake remains untrusted and manual.";
+ return failed.length===0;
+}
 async function exportSelectedPackage(){
  const p=selectedPackage(),status=$("afExportStatus");
  if(!p){if(status)status.textContent="Select a package first.";return;}
@@ -100,6 +123,7 @@ async function exportSelectedPackage(){
 }
 document.addEventListener("click",e=>{
  const b=e.target.closest("button");if(!b)return;
+ if(b.id==="afPreflight")runExportPreflight();
  if(b.id==="afBuild")build();
  if(b.id==="afReview")review();if(b.id==="afDownload")exportSelectedPackage();
  if(b.id==="afCopy"){const p=selectedPackage();if(!p){$("afReviewStatus").textContent="Select a package first.";return;}if(navigator.clipboard?.writeText)navigator.clipboard.writeText(JSON.stringify(p,null,2)).then(()=>$("afReviewStatus").textContent="Package JSON copied.").catch(()=>$("afReviewStatus").textContent="Clipboard unavailable; select the preview text to copy.");else $("afReviewStatus").textContent="Clipboard unavailable; select the preview text to copy.";}

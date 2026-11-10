@@ -1,0 +1,37 @@
+/* V2.1 Command Station visual system — mobile-first, restrained depth and readable contrast */
+:root{--elev-1:0 5px 16px #0005;--elev-2:0 12px 30px #0007;--elev-3:0 20px 48px #0009;--edge-lit:#7188ff55}
+.panel,.tile,.directory-card,.galaxy-shell,.directory-summary{box-shadow:var(--elev-1);transition:box-shadow .2s ease,border-color .2s ease,transform .2s ease}
+.panel{background:linear-gradient(155deg,#202a3b 0%,#151c29 56%,#111722 100%);border-color:#344158}
+.tile{background:linear-gradient(145deg,#222e45 0%,#171f30 62%,#111722 100%);box-shadow:0 8px 22px #0006,inset 0 1px #ffffff0c}
+.tile:focus-visible,button:focus-visible,.field:focus-visible{outline:2px solid #9aaaff;outline-offset:2px}
+@media(hover:hover){.tile:hover,.panel:hover{box-shadow:var(--elev-2);border-color:#53658b}.directory-card:hover{transform:translateY(-2px);box-shadow:var(--elev-2);border-color:#586d9d}}
+button{box-shadow:0 3px 10px #0003;transition:transform .16s ease,box-shadow .16s ease,border-color .16s ease}
+button.primary{box-shadow:0 5px 16px #7e91ff3b,inset 0 1px #ffffff55}
+.field{box-shadow:inset 0 2px 7px #0005}
+.command-v21{margin-top:18px;padding:14px;border:1px solid #3a4c70;border-radius:20px;background:radial-gradient(ellipse at 0 0,#293b6c66,transparent 55%),linear-gradient(145deg,#1b263d,#101621 75%);box-shadow:0 16px 36px #0008,inset 0 1px #ffffff10}
+.command-v21 .v21-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:12px}
+.command-v21 .v21-kicker{font-size:10px;letter-spacing:1.5px;font-weight:800;color:#9eafff}
+.command-v21 h2{font-size:18px;margin:3px 0}
+.v21-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+.v21-card{min-width:0;padding:12px;border:1px solid #34435e;border-radius:14px;background:linear-gradient(150deg,#202d43,#141c2a);box-shadow:0 6px 16px #0005}
+.v21-card h3{font-size:13px;margin:0 0 7px}
+.v21-card p,.v21-card small{color:#aebbd0;font-size:11px;line-height:1.45}
+.v21-pill{display:inline-flex;align-items:center;gap:5px;border:1px solid #455779;border-radius:99px;padding:4px 8px;font-size:10px;color:#cbd6ef;background:#1b2941}
+.v21-dot{width:7px;height:7px;border-radius:50%;background:#e8b86b;box-shadow:0 0 9px currentColor}
+.v21-dot.ready{background:#6ee7b7}.v21-dot.off{background:#f0bd70}
+.v21-form{display:grid;gap:7px;margin-top:9px}
+.v21-form input,.v21-form textarea,.v21-form select{width:100%;background:#0e1522;border:1px solid #394a68;border-radius:10px;padding:10px;color:#f3f6ff;font:inherit;font-size:13px}
+.v21-form textarea{min-height:68px;resize:vertical}
+.v21-list{max-height:210px;overflow:auto;margin-top:8px}
+.v21-entry{padding:9px 0;border-top:1px solid #344158;font-size:12px;overflow-wrap:anywhere}
+.v21-entry strong{display:block;color:#eef3ff;margin-bottom:3px}
+.v21-entry small{color:#9eacc4}
+.v21-actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:8px}
+.v21-actions button{font-size:11px;padding:8px 10px}
+.v21-wide{grid-column:1/-1}
+.v21-preflight{padding:10px;border:1px solid #3b5274;border-radius:12px;background:#0d1728;color:#dceaff;font-size:12px;line-height:1.5;white-space:pre-wrap;overflow-wrap:anywhere}
+#agentFactoryV19 .panel{box-shadow:0 10px 26px #0007,inset 0 1px #ffffff0a}
+#agentFactoryV19 h3{letter-spacing:.1px}
+#agentFactoryV19 button:disabled{opacity:.45;cursor:not-allowed;box-shadow:none}
+@media(max-width:360px){.v21-grid{grid-template-columns:1fr}.v21-wide{grid-column:auto}.command-v21{padding:11px}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
