@@ -10,7 +10,7 @@ test("V2.3 owner operations overview is wired into the app and offline shell",()
  const html=read("index.html"),sw=read("sw.js");
  assert.match(html,/v2\.3-owner-operations\.css/);
  assert.match(html,/v2\.3-owner-operations\.js/);
- assert.match(sw,/mobile-ai-studio-shell-v25/);
+ assert.match(sw,/mobile-ai-studio-shell-v26/);
  assert.match(sw,/v2\.3-owner-operations\.js/);
  assert.match(sw,/v2\.3-owner-operations\.css/);
 });
