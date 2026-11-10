@@ -132,3 +132,16 @@ V1.9 AGENT FACTORY CORE
 - The workbench is local phone-side planning/review only. Reviewer identity is self-entered and not authenticated; evidence references are not independently fetched. No model is called and no generated agent is executed.
 - GitHub Actions now syntax-checks the browser workbench and runs all Node contract, simulator and factory tests.
 - V1.9 blueprint packages now include a role-specific system-instruction specification: mission, responsibilities, manager/floor reporting, prohibited capabilities, truthful evidence handling, output contract and Owner approval boundary. This is a prompt artifact only; no model is called and no tools are granted.
+
+
+
+V3.4 / V3.5 DEVELOPMENT STATUS — 2026-11-10
+- Main baseline at start of V3.5 work: V3.4 Agent Assurance & Self-Repair Planner merge commit 87dcd99eec5e6416de6b5fba1ae56561168fa8d7.
+- V3.5 branch: feature/v3.5-arena-identity-agent-exchange. This is a separate draft implementation branch; main and the published Pages deployment are not changed by these commits.
+- agent-arena.js / agent-arena.css add a phone-local Agent Arena roster preview, per-agent editable visual palette/avatar identity, and a ten-floor architecture display. Existing floors 0–4 and the 29-agent / six-oversight-role baseline are preserved; floors 5–9 are proposals, not active departments.
+- Agent appearance is stored separately from role, instructions, permissions and validation. A visual identity never implies agent execution, capability or certification.
+- Agent Exchange exports portable BLUEPRINT_ONLY JSON packages with a SHA-256 integrity fingerprint. Import validates format, required fields, identity options, security flags and fingerprint before saving a local imported draft.
+- Exchange packages exclude credentials, private memory, tool grants, executable code and activation authority. Import does not overwrite canonical agents, install dependencies, activate or deploy.
+- Public marketplace, payment, hosted distribution, creator authentication, remote update channels, actual Arena simulations, digital twins, autonomous training and live PC/Quinn/Ollama connection remain future work.
+- V3.5 tests cover package integrity, tampering, unsafe tool/security flags, visual identity constraints, floor-plan preservation and offline shell wiring. GitHub Actions must pass before this branch is considered validated.
+- Android physical-device acceptance, independent security review and Owner merge approval remain separate gates. No V3.5 production release or deployment is claimed.
