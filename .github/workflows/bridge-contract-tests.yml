@@ -23,6 +23,7 @@ on:
       - "feature/v3.1-tool-registry-dependency-planner"
       - "feature/v3.2-independent-validation-engine"
       - "feature/v3.3-agent-workflow-orchestrator"
+      - "feature/v3.4-agent-assurance-self-repair"
     paths:
       - "bridge/**"
       - "tests/**"
@@ -63,6 +64,8 @@ jobs:
         run: node --check independent-validation.js
       - name: Syntax-check V3.3 agent workflow orchestrator
         run: node --check agent-workflow-orchestrator.js
+      - name: Syntax-check V3.4 agent assurance planner
+        run: node --check agent-assurance.js
       - name: Validate V3.0 protocol schema JSON
         run: node -e "JSON.parse(require('node:fs').readFileSync('bridge/protocol-v3.schema.json','utf8'))"
       - name: Run all bridge and factory tests
