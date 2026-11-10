@@ -50,6 +50,17 @@ test("V2.2 Owner Approval Center and floor dashboards are included in the offlin
   assert.doesNotMatch(source, /fetch\s*\(|WebSocket\s*\(|EventSource\s*\(/);
 });
 
+test("V2.3 Owner operations assets are included and syntax-valid offline", () => {
+  const cached = new Set(precachedFiles(serviceWorker));
+  assert.ok(cached.has("v2.3-owner-operations.js"));
+  assert.ok(cached.has("v2.3-owner-operations.css"));
+  assert.match(indexHtml, /v2\\.3-owner-operations\\.js/);
+  assert.match(indexHtml, /v2\\.3-owner-operations\\.css/);
+  execFileSync(process.execPath, ["--check", path.join(root, "v2.3-owner-operations.js")]);
+  const source = fs.readFileSync(path.join(root, "v2.3-owner-operations.js"), "utf8");
+  assert.doesNotMatch(source, /localStorage\\.setItem\\s*\\(|fetch\\s*\\(|WebSocket\\s*\\(|EventSource\\s*\\(/);
+});
+
 test("V2.1 command station assets are included in the offline shell", () => {
   const cached = new Set(precachedFiles(serviceWorker));
   assert.ok(cached.has("v2.1-studio-systems.js"));
