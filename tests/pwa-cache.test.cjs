@@ -36,7 +36,7 @@ test("Agent Factory browser workbench is included in the offline shell", () => {
 });
 
 test("service worker cache version is bumped for the expanded shell", () => {
-  assert.match(serviceWorker, /const CACHE=["']mobile-ai-studio-shell-v22["']/);
+  assert.match(serviceWorker, /const CACHE=["']mobile-ai-studio-shell-v23["']/);
 });
 
 test("V2.2 Owner Approval Center and floor dashboards are included in the offline shell", () => {
