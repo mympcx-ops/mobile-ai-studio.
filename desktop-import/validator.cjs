@@ -185,7 +185,7 @@ function validateEnvelope(input) {
     "TRUTHFULNESS: Distinguish observed evidence, user-provided information, assumptions, and recommendations. Never invent test results or completion status.",
     "OUTPUT: Return status, summary, deliverables, evidence, assumptions, risks, blockers, and approvalRequired.",
     "LIFECYCLE: This instruction package is a blueprint. It does not authorize activation or execution."
-  ].join("\\n");
+  ].join("\n");
   const capabilityKeys = ["toolExecution", "filesystemWrite", "externalNetwork", "agentDispatch", "publish", "deploy", "credentialAccess", "ownerApprovalRequired"];
   if (!isObject(instruction) || instruction.templateVersion !== "1.0.0" ||
       instruction.agentId !== pkg.agent.id || instruction.role !== pkg.agent.name ||
