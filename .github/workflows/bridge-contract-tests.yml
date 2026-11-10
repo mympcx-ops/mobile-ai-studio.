@@ -12,7 +12,8 @@ on:
       - ".github/workflows/bridge-contract-tests.yml"
   push:
     branches:
-      - "feature/v1.2-live-command-station"\n      - "feature/v2.3-owner-operations-lifecycle"
+      - "feature/v1.2-live-command-station"
+      - "feature/v2.3-owner-operations-lifecycle"
     paths:
       - "bridge/**"
       - "tests/**"
