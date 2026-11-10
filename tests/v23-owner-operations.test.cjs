@@ -57,7 +57,7 @@ test("V2.3.1 removes independently reviewed packages from the validation queue",
  assert.equal(api.readOnly,true);
 });
 test("V2.3.1 snapshots current local records and schedules refresh after lifecycle actions",()=>{
- const {api,values}=runSnapshot({}, {agents:[]});
+ const {api,values,listeners,get scheduled}=runSnapshot({}, {agents:[]});
  assert.equal(api.snapshot().pendingApprovals,0);
  values.set("mobile-ai-studio-v1.2-operations",JSON.stringify({approvals:[{status:"PENDING"}]}));
  assert.equal(api.snapshot().pendingApprovals,1);
