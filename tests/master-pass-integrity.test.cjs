@@ -9,7 +9,7 @@ test("master pass board is wired into the phone application and offline shell",(
  const html=read("index.html"),sw=read("sw.js");
  assert.match(html,/<script[^>]+src=["']master-pass\.js["']/i);
  assert.match(sw,/(["'])\.\/master-pass\.js\1/);
- assert.match(sw,/mobile-ai-studio-shell-v21/);
+ assert.match(sw,/mobile-ai-studio-shell-v22/);
 });
 test("master pass status is truthful about disconnected PC and prohibited execution",()=>{
  const source=read("master-pass.js");
