@@ -31,7 +31,7 @@ function fixture() {
         "TRUTHFULNESS: Distinguish observed evidence, user-provided information, assumptions, and recommendations. Never invent test results or completion status.",
         "OUTPUT: Return status, summary, deliverables, evidence, assumptions, risks, blockers, and approvalRequired.",
         "LIFECYCLE: This instruction package is a blueprint. It does not authorize activation or execution."
-      ].join("\\n"),
+      ].join("\n"),
       capabilities: {
         toolExecution: false, filesystemWrite: false, externalNetwork: false,
         agentDispatch: false, publish: false, deploy: false,
