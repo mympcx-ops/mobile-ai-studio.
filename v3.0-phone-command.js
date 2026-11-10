@@ -9,7 +9,7 @@ function validateHostOrigin(raw){
  let u;try{u=new URL(String(raw||"").trim());}catch(e){return {ok:false,reason:"Enter a valid HTTPS host URL."};}
  if(u.protocol!=="https:")return {ok:false,reason:"The phone-to-PC bridge requires HTTPS. Plain HTTP is not accepted."};
  if(u.username||u.password||u.search||u.hash||u.pathname!=="/")return {ok:false,reason:"Enter only the HTTPS origin: scheme, host and optional port."};
- if(u.hostname==="localhost"||u.hostname==="127.0.0.1"||u.hostname==="::1")return {ok:false,reason:"Loopback addresses point to this phone, not your separate PC."};
+ if(u.hostname==="localhost"||u.hostname==="localhost."||u.hostname==="127.0.0.1"||u.hostname.startsWith("127.")||u.hostname==="::1"||u.hostname==="[::1]")return {ok:false,reason:"Loopback addresses point to this phone, not your separate PC."};
  return {ok:true,origin:u.origin};
 }
 function randomHex(bytes=16){
