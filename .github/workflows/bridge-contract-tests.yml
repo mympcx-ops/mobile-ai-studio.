@@ -17,6 +17,7 @@ on:
       - "feature/v3.0-phone-command-and-host-bridge"
       - "release/v3.0-final"
       - "release/v3.0-on-main"
+      - "feature/prompt-to-agent-intelligence"
     paths:
       - "bridge/**"
       - "tests/**"
