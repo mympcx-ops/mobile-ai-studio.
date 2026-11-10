@@ -18,7 +18,7 @@ test("V3.0 module is wired into the phone shell and service worker cache",()=>{
  const html=read("index.html"),sw=read("sw.js");
  assert.match(html,/<link rel="stylesheet" href="v3\.0-phone-command\.css">/);
  assert.match(html,/<script src="v3\.0-phone-command\.js"><\/script>/);
- assert.match(sw,/mobile-ai-studio-shell-v19/);
+ assert.match(sw,/mobile-ai-studio-shell-v21/);
  assert.match(sw,/v3\.0-phone-command\.js/);
  assert.match(sw,/v3\.0-phone-command\.css/);
 });
