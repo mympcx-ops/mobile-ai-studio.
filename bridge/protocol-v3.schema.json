@@ -1,0 +1,69 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://mobile-ai-studio.invalid/schemas/bridge-protocol-v3.schema.json",
+  "title": "Mobile AI Studio Bridge Protocol 3.0 Pairing Request",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "protocol",
+    "requestId",
+    "nonce",
+    "createdAt",
+    "expiresAt",
+    "phoneLabel",
+    "hostOrigin",
+    "requestedCapabilities",
+    "requestedMode",
+    "status",
+    "securityNotice"
+  ],
+  "properties": {
+    "protocol": {
+      "const": "mobile-ai-studio-bridge/3.0"
+    },
+    "requestId": {
+      "type": "string",
+      "pattern": "^PAIR-[a-f0-9]{24}$"
+    },
+    "nonce": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{48}$"
+    },
+    "createdAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "expiresAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "phoneLabel": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 80
+    },
+    "hostOrigin": {
+      "type": "string",
+      "format": "uri",
+      "pattern": "^https://"
+    },
+    "requestedCapabilities": {
+      "type": "array",
+      "const": [
+        "health.read",
+        "telemetry.read",
+        "agent-package.preview"
+      ]
+    },
+    "requestedMode": {
+      "const": "READ_ONLY"
+    },
+    "status": {
+      "const": "REQUEST_CREATED_NOT_PAIRED"
+    },
+    "securityNotice": {
+      "type": "string",
+      "minLength": 1
+    }
+  }
+}
