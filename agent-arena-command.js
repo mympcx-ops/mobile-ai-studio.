@@ -26,6 +26,22 @@ function decideSession(session,decision,note){
  session.dispatchAuthorized=false;session.agentDispatched=false;session.executionPerformed=false;session.certified=false;
  return session;
 }
+function attachEvidence(session,chamberA,chamberB){
+ if(!session||session.format!=="mobile-ai-studio-arena-session/1")throw new Error("A valid Arena session is required.");
+ if(session.ownerDecision!=="ACCEPTED")throw new Error("Owner must accept the planning proposal before evidence can be attached.");
+ if(!chamberA||!chamberA.chamberId||!chamberA.agent||!chamberB||!chamberB.chamberId||!chamberB.agent)throw new Error("Choose two valid saved Test Chamber records.");
+ if(chamberA.agent.id!==session.participants[0].id)throw new Error("Baseline evidence must belong to "+session.participants[0].name+".");
+ if(chamberB.agent.id!==session.participants[1].id)throw new Error("Candidate evidence must belong to "+session.participants[1].name+".");
+ session.evidence={baselineChamberId:chamberA.chamberId,candidateChamberId:chamberB.chamberId,attachedAt:now()};
+ session.updatedAt=session.evidence.attachedAt;return session;
+}
+function compareSessionEvidence(session,chambers,labApi){
+ if(!session||!session.evidence)throw new Error("Attach both Test Chamber records first.");
+ const rows=Array.isArray(chambers)?chambers:[],a=rows.find(x=>x.chamberId===session.evidence.baselineChamberId),b=rows.find(x=>x.chamberId===session.evidence.candidateChamberId);
+ if(!a||!b)throw new Error("One or both linked Test Chamber records are no longer available.");
+ const lab=labApi||root.AgentArenaLab;if(!lab||typeof lab.compareChambers!=="function")throw new Error("The Test Chamber comparison engine is unavailable.");
+ return lab.compareChambers(a,b);
+}
 function readAll(storage){try{const s=storage||root.localStorage,v=JSON.parse(s.getItem(STORE)||"[]");return Array.isArray(v)?v:[]}catch(e){return []}}
 function save(session,storage){
  if(!session||!session.sessionId)throw new Error("A valid Arena session is required.");
@@ -60,8 +76,14 @@ function render(){
  const metrics=root.document&&root.document.getElementById("arenaCommandMetrics"),out=root.document&&root.document.getElementById("arenaCommandSessions");if(!metrics||!out)return;
  const agents=roster(),sessions=readAll(),pending=sessions.filter(s=>s.ownerDecision==="PENDING").length,accepted=sessions.filter(s=>s.ownerDecision==="ACCEPTED").length;
  const chambers=root.AgentArenaLab&&root.AgentArenaLab.readAll?root.AgentArenaLab.readAll():[];
- metrics.innerHTML=(()=>{const counts=countRoster(agents);return metric("Canonical agents",counts.agents,"Planning roster")+metric("Oversight roles",counts.oversight,"Directors / Validators")+metric("Managers",counts.managers,"Reporting layer")+metric("Saved chambers",chambers.length,"Manual evidence records")+metric("Challenge proposals",sessions.length,""+pending+" awaiting Owner · "+accepted+" accepted locally")})();
- out.innerHTML=sessions.length?sessions.map(s=>'<article class="arena-command-session"><div class="row between"><strong>'+esc(s.title)+'</strong><span class="arena-plan-tag">'+esc(s.status.replaceAll("_"," "))+'</span></div><p>'+esc(s.mission)+'</p><div class="arena-command-duel">'+s.participants.map(p=>'<div>'+avatarMarkup({id:p.id,name:p.name,floor:p.floor,role:p.role})+'<span><strong>'+esc(p.name)+'</strong><small>'+esc(p.floor)+'</small></span></div>').join('<b class="arena-command-vs">VS</b>')+'</div><small class="muted">Focus: '+esc(s.scenarioLabel)+' · '+esc(new Date(s.createdAt).toLocaleString())+'</small>'+(s.ownerDecision==="PENDING"?'<div class="arena-command-actions"><button data-arena-decision="ACCEPT" data-session-id="'+esc(s.sessionId)+'" class="primary">Accept planning proposal</button><button data-arena-decision="DECLINE">Decline</button></div>':'<div class="arena-command-decision">Owner decision: '+esc(s.ownerDecision)+' · '+esc(s.ownerDecisionAt||"")+'</div>')+'<small class="arena-command-safety">Dispatch: disabled · Execution: not performed · Certification: not granted</small></article>').join(""):'<div class="empty">No challenge proposals yet. Create one above to start the Arena planning board.</div>';
+ metrics.innerHTML=(()=>{const counts=countRoster(agents);return metric("Canonical agents",counts.agents,"Planning roster")+metric("Oversight roles",counts.oversight,"Directors / Validators")+metric("Managers",counts.managers,"Reporting layer")+metric("Saved chambers",chambers.length,"Manual evidence records")+metric("Challenge proposals",sessions.length,pending+" awaiting Owner · "+accepted+" accepted locally")})();
+ const chamberOptions=(agentId,selectedId)=>chambers.filter(c=>c.agent&&c.agent.id===agentId).map(c=>'<option value="'+esc(c.chamberId)+'" '+(c.chamberId===selectedId?"selected":"")+'>'+esc(c.agent.name)+' · '+esc(root.AgentArenaLab.evaluateChamber(c).status)+'</option>').join("");
+ out.innerHTML=sessions.length?sessions.map(s=>{
+  const evidence=s.ownerDecision==="ACCEPTED"?'<div class="arena-command-evidence"><strong>Attach manual Test Chamber evidence</strong><div class="arena-command-pair"><label>Baseline · '+esc(s.participants[0].name)+'<select class="field" data-evidence-a="'+esc(s.sessionId)+'"><option value="">Choose saved chamber…</option>'+chamberOptions(s.participants[0].id,s.evidence?.baselineChamberId)+'</select></label><label>Candidate · '+esc(s.participants[1].name)+'<select class="field" data-evidence-b="'+esc(s.sessionId)+'"><option value="">Choose saved chamber…</option>'+chamberOptions(s.participants[1].id,s.evidence?.candidateChamberId)+'</select></label></div><button data-arena-attach-evidence="'+esc(s.sessionId)+'" style="width:100%">Attach and compare manual evidence</button><div data-evidence-result="'+esc(s.sessionId)+'" class="arena-command-evidence-result"></div></div>':'';
+  let comparison="";
+  if(s.evidence&&root.AgentArenaLab){try{const report=compareSessionEvidence(s,chambers);comparison='<div class="arena-command-evidence-result"><strong>'+esc(report.baseline.agent)+' '+report.baseline.passes+'/'+report.baseline.total+' PASS</strong><strong>'+esc(report.candidate.agent)+' '+report.candidate.passes+'/'+report.candidate.total+' PASS</strong><span>Difference: '+(report.passDifference>0?"+":"")+report.passDifference+' recorded PASS outcomes</span><small>'+esc(report.meaning)+'</small></div>'}catch(e){comparison='<small class="muted">'+esc(e.message)+'</small>'}}
+  return '<article class="arena-command-session"><div class="row between"><strong>'+esc(s.title)+'</strong><span class="arena-plan-tag">'+esc(s.status.replaceAll("_"," "))+'</span></div><p>'+esc(s.mission)+'</p><div class="arena-command-duel">'+s.participants.map(p=>'<div>'+avatarMarkup({id:p.id,name:p.name,floor:p.floor,role:p.role})+'<span><strong>'+esc(p.name)+'</strong><small>'+esc(p.floor)+'</small></span></div>').join('<b class="arena-command-vs">VS</b>')+'</div><small class="muted">Focus: '+esc(s.scenarioLabel)+' · '+esc(new Date(s.createdAt).toLocaleString())+'</small>'+(s.ownerDecision==="PENDING"?'<div class="arena-command-actions"><button data-arena-decision="ACCEPT" data-session-id="'+esc(s.sessionId)+'" class="primary">Accept planning proposal</button><button data-arena-decision="DECLINE" data-session-id="'+esc(s.sessionId)+'">Decline</button></div>':'<div class="arena-command-decision">Owner decision: '+esc(s.ownerDecision)+' · '+esc(s.ownerDecisionAt||"")+'</div>')+evidence+comparison+'<small class="arena-command-safety">Dispatch: disabled · Execution: not performed · Certification: not granted</small></article>';
+ }).join(""):'<div class="empty">No challenge proposals yet. Create one above to start the Arena planning board.</div>';
 }
 function message(value){const el=root.document&&root.document.getElementById("arenaCommandMessage");if(el)el.textContent=value}
 function bind(){
@@ -78,10 +100,18 @@ function bind(){
     const items=readAll(),s=items.find(x=>x.sessionId===b.dataset.sessionId);if(!s)throw new Error("Session proposal not found.");
     decideSession(s,b.dataset.arenaDecision);save(s);render();message(s.ownerDecision==="ACCEPTED"?"Owner acceptance recorded locally. Execution remains disabled.":"Proposal declined and retained in the local record.");return;
    }
+   if(b.dataset.arenaAttachEvidence){
+    const items=readAll(),s=items.find(x=>x.sessionId===b.dataset.arenaAttachEvidence);if(!s)throw new Error("Session proposal not found.");
+    const chambers=root.AgentArenaLab&&root.AgentArenaLab.readAll?root.AgentArenaLab.readAll():[];
+    const a=chambers.find(x=>x.chamberId===host.querySelector('[data-evidence-a="'+s.sessionId+'"]').value),d=chambers.find(x=>x.chamberId===host.querySelector('[data-evidence-b="'+s.sessionId+'"]').value);
+    attachEvidence(s,a,d);save(s);const report=compareSessionEvidence(s,chambers);
+    const target=host.querySelector('[data-evidence-result="'+s.sessionId+'"]');if(target)target.innerHTML='<strong>'+esc(report.baseline.agent)+' '+report.baseline.passes+'/'+report.baseline.total+' PASS</strong><strong>'+esc(report.candidate.agent)+' '+report.candidate.passes+'/'+report.candidate.total+' PASS</strong><span>Difference: '+(report.passDifference>0?"+":"")+report.passDifference+' recorded PASS outcomes</span><small>'+esc(report.meaning)+'</small>';
+    render();message("Manual Test Chamber evidence linked and compared. No agent was run; no certification was granted.");return;
+   }
   }catch(err){message(err.message)}
  });
 }
-const api={STORE,SCENARIOS,createSession,decideSession,countRoster,readAll,save,remove,render,init:function(){inject();bind();render()}};
+const api={STORE,SCENARIOS,createSession,decideSession,attachEvidence,compareSessionEvidence,countRoster,readAll,save,remove,render,init:function(){inject();bind();render()}};
 root.AgentArenaCommand=api;if(typeof module!=="undefined"&&module.exports)module.exports=api;
 if(root.document){const start=()=>api.init();if(root.document.readyState==="loading")root.document.addEventListener("DOMContentLoaded",start);else start()}
 })(typeof window!=="undefined"?window:globalThis);
