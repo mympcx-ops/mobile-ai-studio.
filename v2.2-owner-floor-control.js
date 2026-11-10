@@ -41,6 +41,7 @@ document.addEventListener("click",e=>{
  if(b.dataset.v22ApprovalSource){const id=b.dataset.v22ApprovalSource==="v12"?"v12ApprovalList":"ccApprovalList";const el=$(id);if(el){el.scrollIntoView({behavior:"smooth",block:"center"});el.style.outline="2px solid #91a5ff";setTimeout(()=>el.style.outline="",1600);}return;}
  if(b.dataset.v22Profile){if(window.openAgentDetails)window.openAgentDetails(b.dataset.v22Profile);return;}
  if(b.dataset.v22Floor){nav("agents");const f=document.querySelector('[data-agent-filter="'+b.dataset.v22Floor+'"]');if(f)f.click();return;}
+ if(["v12AddApproval","ccAddApproval","v12AddTask","v12WsCreate"].includes(b.id)||b.dataset.v12Decision||b.dataset.ccApproval||b.dataset.v12Task||b.dataset.wsStatus)Promise.resolve().then(render);
 });
 window.addEventListener("load",()=>{inject();render();});
 document.addEventListener("DOMContentLoaded",()=>{inject();render();});
