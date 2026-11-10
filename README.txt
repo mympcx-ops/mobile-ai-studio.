@@ -151,3 +151,5 @@ V3.6 Agent Arena Test Chambers (draft milestone)
 - Each chamber stores observed outcomes and evidence references locally. PASS requires an observation plus an evidence reference; FAIL, BLOCKED and NOT_RUN remain explicit.
 - Saved baseline and candidate chambers can be compared descriptively by scenario. This is not an intelligence score, live agent execution or certification.
 - Agent dispatch, model inference, tool execution, reviewer authentication, independent evidence verification, activation and deployment are not performed by this phone-side module.
+- V3.5 identity allocation now guarantees a distinct default palette/avatar pair for all 35 canonical and oversight roles; Owner edits cannot claim another role's pair.
+- V3.6 scenario outcomes can be reset to NOT_RUN; resetting clears the prior observation and evidence so stale results cannot remain attached.
