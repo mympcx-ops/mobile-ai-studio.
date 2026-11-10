@@ -58,7 +58,7 @@ test("V2.3 Owner operations assets are included and syntax-valid offline", () =>
   assert.match(indexHtml, /v2\\.3-owner-operations\\.css/);
   execFileSync(process.execPath, ["--check", path.join(root, "v2.3-owner-operations.js")]);
   const source = fs.readFileSync(path.join(root, "v2.3-owner-operations.js"), "utf8");
-  assert.doesNotMatch(source, /localStorage\\.setItem\\s*\\(|fetch\\s*\\(|WebSocket\\s*\\(|EventSource\\s*\\(/);
+  assert.doesNotMatch(source, /localStorage\.setItem\s*\(|fetch\s*\(|WebSocket\s*\(|EventSource\s*\(/);
 });
 
 test("V2.1 command station assets are included in the offline shell", () => {
