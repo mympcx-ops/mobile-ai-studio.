@@ -65,7 +65,9 @@ function createCustomAgentDraft(input){
  const name=String(input?.name||"").trim(),floor=String(input?.floor||"").trim(),director=String(input?.director||"").trim(),manager=String(input?.manager||"").trim(),validator=String(input?.validator||"").trim(),mission=String(input?.mission||"").trim(),responsibilities=String(input?.responsibilities||"").trim(),dependencies=String(input?.dependencies||"").trim();
  if(name.length<3||name.length>80)throw new Error("Agent name must be 3–80 characters.");
  if(!["Music","Media","Racing"].includes(floor))throw new Error("Select a valid studio floor.");
- if(director.length<2||director.length>80)throw new Error("Enter the floor director.");\n if(manager.length<2||manager.length>80)throw new Error("Enter a manager or reporting role.");\n if(validator.length<2||validator.length>80)throw new Error("Enter the independent validator.");
+ if(director.length<2||director.length>80)throw new Error("Enter the floor director.");
+ if(manager.length<2||manager.length>80)throw new Error("Enter a manager or reporting role.");
+ if(validator.length<2||validator.length>80)throw new Error("Enter the independent validator.");
  if(mission.length<10||mission.length>1000)throw new Error("Mission must be 10–1,000 characters.");
  if(responsibilities.length<10||responsibilities.length>2000)throw new Error("Responsibilities must be 10–2,000 characters.");
  return {id:"CUSTOM-"+randomHex(8),name,floor,reportingChain:{floorDirector:director,manager,independentValidator:validator},mission,responsibilities,dependencies,createdAt:new Date().toISOString(),lifecycleStatus:"DRAFT_NOT_PACKAGED",validationStatus:"NOT_RUN",canonicalFleetStatus:"NOT_ADDED",permissionProfile:{localRead:true,localWrite:false,externalNetwork:false,execute:false,publish:false,deploy:false,humanApprovalRequired:true},approval:{ownerApprovalRequired:true,activationAuthorized:false},safety:{executable:false,dispatchEnabled:false,externalWritesEnabled:false,publishEnabled:false,deployEnabled:false,secretsIncluded:false}};
