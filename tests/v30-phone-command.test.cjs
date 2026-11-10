@@ -24,7 +24,7 @@ test("V3.0 module is wired into the phone shell and service worker cache",()=>{
 });
 test("V3.0 rejects plaintext, loopback and non-origin host URLs",()=>{
  const api=loadApi();
- for(const url of ["http://192.168.1.20:8443","http://localhost:8443","https://127.0.0.1","https://host.example/path","https://user:pass@host.example","https://host.example/?token=x"])
+ for(const url of ["http://192.168.1.20:8443","http://localhost:8443","https://127.0.0.1","https://127.0.0.2","https://[::1]","https://localhost./","https://host.example/path","https://user:pass@host.example","https://host.example/?token=x"])
   assert.equal(api.validateHostOrigin(url).ok,false,url);
  assert.equal(api.validateHostOrigin("https://studio.example:9443").origin,"https://studio.example:9443");
 });
