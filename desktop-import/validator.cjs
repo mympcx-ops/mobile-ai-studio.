@@ -174,20 +174,36 @@ function validateEnvelope(input) {
   }
 
   const instruction = pkg.agentInstruction;
-  if (!isObject(instruction) || instruction.agentId !== pkg.agent.id ||
-      instruction.role !== pkg.agent.name || instruction.floor !== pkg.agent.floor ||
-      !hasText(instruction.systemInstruction) || !isObject(instruction.capabilities) ||
-      instruction.capabilities.toolExecution !== false ||
-      instruction.capabilities.filesystemWrite !== false ||
-      instruction.capabilities.externalNetwork !== false ||
-      instruction.capabilities.agentDispatch !== false ||
-      instruction.capabilities.publish !== false ||
-      instruction.capabilities.deploy !== false ||
-      instruction.capabilities.credentialAccess !== false ||
+  const expectedOutputFields = ["status", "summary", "deliverables", "evidence", "assumptions", "risks", "blockers", "approvalRequired"];
+  const expectedInstruction = [
+    "You are " + pkg.agent.name + ", a planned specialist agent in the " + pkg.agent.floor + " floor of Mobile AI Studio.",
+    "MISSION: " + pkg.agent.mission,
+    "RESPONSIBILITIES: " + pkg.agent.responsibilities,
+    "REPORTING: Report work proposals and findings to " + (instruction?.reportsTo || "") + "; escalate through " + (instruction?.floorDirector || "") + ". Independent review is performed by " + (instruction?.independentValidator || "the floor Independent Validator") + ".",
+    "PERMISSIONS: Planning and read-only analysis only. No command execution, process launch, file modification, arbitrary path access, external network, publishing, deployment, agent dispatch, or credential access.",
+    "APPROVAL: Never represent a proposal as approved or completed. Escalate consequential actions to the Owner. Independent validation must be separate from the builder.",
+    "TRUTHFULNESS: Distinguish observed evidence, user-provided information, assumptions, and recommendations. Never invent test results or completion status.",
+    "OUTPUT: Return status, summary, deliverables, evidence, assumptions, risks, blockers, and approvalRequired.",
+    "LIFECYCLE: This instruction package is a blueprint. It does not authorize activation or execution."
+  ].join("\\n");
+  const capabilityKeys = ["toolExecution", "filesystemWrite", "externalNetwork", "agentDispatch", "publish", "deploy", "credentialAccess", "ownerApprovalRequired"];
+  if (!isObject(instruction) || instruction.templateVersion !== "1.0.0" ||
+      instruction.agentId !== pkg.agent.id || instruction.role !== pkg.agent.name ||
+      instruction.floor !== pkg.agent.floor || !hasText(instruction.reportsTo) ||
+      !hasText(instruction.floorDirector) || !hasText(instruction.independentValidator) ||
+      instruction.systemInstruction !== expectedInstruction ||
+      !isObject(instruction.capabilities) ||
+      Object.keys(instruction.capabilities).sort().join(",") !== capabilityKeys.slice().sort().join(",") ||
+      capabilityKeys.slice(0, 7).some(key => instruction.capabilities[key] !== false) ||
       instruction.capabilities.ownerApprovalRequired !== true ||
       !isObject(instruction.outputContract) ||
-      instruction.outputContract.mustDistinguishEvidenceFromInference !== true) {
-    return fail("INSTRUCTION_POLICY", "Agent instruction or capability contract is incomplete or unsafe.");
+      Object.keys(instruction.outputContract).sort().join(",") !== ["mustDistinguishEvidenceFromInference", "requiredFields"].sort().join(",") ||
+      instruction.outputContract.mustDistinguishEvidenceFromInference !== true ||
+      canonical(instruction.outputContract.requiredFields) !== canonical(expectedOutputFields) ||
+      pkg.agent.lifecycleStatus !== "PLANNED" ||
+      pkg.agent.builderStatus !== "BUILT_PENDING_VALIDATION" ||
+      pkg.agent.validationStatus !== "NOT_RUN") {
+    return fail("INSTRUCTION_POLICY", "Agent instruction, lifecycle, or capability contract is incomplete, altered, or unsafe.");
   }
 
   if (!Array.isArray(pkg.acceptanceChecks) || pkg.acceptanceChecks.length !== CHECK_IDS.length) {
