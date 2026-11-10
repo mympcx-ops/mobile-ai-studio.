@@ -1,4 +1,4 @@
-const CACHE="mobile-ai-studio-shell-v13";
+const CACHE="mobile-ai-studio-shell-v14";
 const FILES=["./","./index.html","./command-center.js","./app.js","./agents.js","./agent-factory/browser-ui.js","./agent-details.js","./galaxy.js","./v12-operations.js","./v12-organization.js","./v12-workspaces.js","./v12-readiness.js","./v12-command-extensions.js","./v13-integration-foundation.js","./master-pass.js","./manifest.webmanifest","./icon.svg"];
 self.addEventListener("install",e=>e.waitUntil(caches.open(CACHE).then(c=>c.addAll(FILES)).then(()=>self.skipWaiting())));
 self.addEventListener("activate",e=>e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim())));
