@@ -15,7 +15,8 @@ function snapshot(){
  const s=stores(),c=catalog(),agents=arr(c,"agents"),packages=arr(s.factory,"packages"),factoryReviews=arr(s.factory,"reviews"),assignments=arr(s.work,"assignments"),workReviews=arr(s.work,"reviews"),approvals=[...arr(s.ops,"approvals"),...arr(s.command,"approvals")],tasks=[...arr(s.ops,"tasks"),...arr(s.command,"tasks")];
  const pendingApprovals=approvals.filter(x=>String(x.status||"").toUpperCase()==="PENDING");
  const ready=assignments.filter(x=>x.status==="READY_FOR_VALIDATION");
- const pendingPackages=packages.filter(x=>x.packageStatus==="BUILT_PENDING_INDEPENDENT_VALIDATION");
+ const reviewedPackageIds=new Set(factoryReviews.map(x=>x.packageId).filter(Boolean));
+ const pendingPackages=packages.filter(x=>x.packageStatus==="BUILT_PENDING_INDEPENDENT_VALIDATION"&&!reviewedPackageIds.has(x.packageId));
  const ownerPending=factoryReviews.filter(x=>x.outcome==="PASS_RECORDED_PENDING_OWNER_APPROVAL"&&x.activationAuthorized!==true);
  const floorData=floors.map(f=>{
   const ids=new Set(agents.filter(a=>a.floor===f).map(a=>a.id));
@@ -53,14 +54,17 @@ function render(){
  ["Pending approval proposals",s.pendingApprovals,"Decisions remain in original approval queues"]
  ].map(([k,v,d])=>'<div class="v23-life-row"><span><strong>'+esc(k)+'</strong><small>'+esc(d)+'</small></span><b>'+v+'</b></div>').join("");
 }
+const mutationButtons=new Set(["ccAddTask","ccAddApproval","ccSaveValidation","v12AddTask","v12AddApproval","v12WsCreate","v12ReviewSave","afBuild","afReview"]);
 document.addEventListener("click",e=>{
  const b=e.target.closest("button");if(!b)return;
  if(b.id==="v23Refresh"){render();return;}
  if(b.dataset.v23Target){const target=$(b.dataset.v23Target);if(target){target.scrollIntoView({behavior:"smooth",block:"start"});target.setAttribute("tabindex","-1");target.focus({preventScroll:true});}}
+ const lifecycleAction=mutationButtons.has(b.id)||["v12Task","v12Decision","wsStatus","ccTask","ccApproval"].some(k=>b.dataset[k]!==undefined);
+ if(lifecycleAction)window.setTimeout(render,250);
 });
 document.addEventListener("DOMContentLoaded",()=>{inject();render();});
 window.addEventListener("load",()=>{inject();render();});
 window.addEventListener("storage",render);
 window.addEventListener("mobile-ai-studio-refresh",render);
-window.MOBILE_AI_STUDIO_V23={refresh:render,version:"2.3.0",readOnly:true};
+window.MOBILE_AI_STUDIO_V23={refresh:render,snapshot,version:"2.3.1",readOnly:true};
 })();
