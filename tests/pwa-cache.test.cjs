@@ -77,4 +77,4 @@ test("V3.5 Agent Arena and Identity Studio assets are integrated and precached",
   execFileSync(process.execPath, [ "--check", path.join(root, "agent-arena.js") ]);
 });
 
-test("V3.6 Agent Arena test chamber script is loaded and precached", () => { // Offline install contract const cached = new Set(precachedFiles(serviceWorker)); assert.ok(cached.has("agent-arena-lab.js")); assert.match(indexHtml, /agent-arena-lab\.js/); execFileSync(process.execPath, ["--check", path.join(root, "agent-arena-lab.js")]); });
+test("V3.6 Agent Arena test chamber script is loaded and precached", () => { const cached = new Set(precachedFiles(serviceWorker)); assert.ok(cached.has("agent-arena-lab.js")); assert.match(indexHtml, /agent-arena-lab\.js/); execFileSync(process.execPath, ["--check", path.join(root, "agent-arena-lab.js")]); });
