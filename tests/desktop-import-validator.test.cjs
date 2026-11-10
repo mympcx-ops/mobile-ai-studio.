@@ -12,7 +12,7 @@ function fixture() {
     agent: {
       id: "music.test.agent", name: "Test Agent", floor: "Music", manager: "Music Manager",
       mission: "Prepare proposals.", responsibilities: "Research and document.",
-      lifecycleStatus: "PLANNED", permissionProfile: {
+      lifecycleStatus: "PLANNED", builderStatus: "BUILT_PENDING_VALIDATION", validationStatus: "NOT_RUN", permissionProfile: {
         localRead: true, localWrite: false, externalNetwork: false,
         execute: false, publish: false, deploy: false, humanApprovalRequired: true
       }
@@ -82,7 +82,7 @@ test("rejects malformed JSON and oversized input", () => {
 
 test("rejects package tampering even when the envelope parses", () => {
   const data = fixture();
-  data.package.agent.mission = "Execute arbitrary commands.";
+  data.package.provenance.scopeNotes = "Tampered after build.";
   assert.equal(validateEnvelope(data).code, "INTEGRITY_MISMATCH");
 });
 
