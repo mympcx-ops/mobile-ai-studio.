@@ -1,5 +1,4 @@
 (()=>{"use strict";
-const PROPOSALS="mobile-ai-studio-tool-proposals-v1";
 const STORE="mobile-ai-studio-validation-evidence-v1";
 const $=id=>document.getElementById(id);
 const CATEGORIES=[
@@ -86,7 +85,7 @@ function wire(){
  if(b.id==="v32Generate"){const i=$("v32Blueprint").value;const list=drafts();if(i===""||!list[Number(i)])throw new Error("Choose a saved blueprint first.");current=create(list[Number(i)],"");$("v32Output").hidden=false;render();$("v32Status").textContent="Six required validation scenarios generated. No test has been executed.";save(current);renderSaved();return;}
  if(b.id==="v32Refresh"){options();$("v32Status").textContent="Saved blueprints refreshed.";return;}
  if(b.id==="v32SaveRoles"){current.builder=safe($("v32Builder").value);current.validator=safe($("v32Validator").value);save(current);render();$("v32Status").textContent="Builder and Validator declarations saved. Identity remains unauthenticated.";return;}
- if(b.dataset.v32SaveTest){const id=b.dataset.v32SaveTest,status=$('[data-v32-status="'+id+'"]').value,observed=$('[data-v32-observed="'+id+'"]').value,evidence=$('[data-v32-evidence="'+id+'"]').value;recordTest(current,id,status,evidence,observed);save(current);render();renderSaved();$("v32Status").textContent="Evidence entry saved locally. It has not been independently verified.";return;}
+ if(b.dataset.v32SaveTest){const id=b.dataset.v32SaveTest,status=document.querySelector('[data-v32-status="'+id+'"]').value,observed=document.querySelector('[data-v32-observed="'+id+'"]').value,evidence=document.querySelector('[data-v32-evidence="'+id+'"]').value;recordTest(current,id,status,evidence,observed);save(current);render();renderSaved();$("v32Status").textContent="Evidence entry saved locally. It has not been independently verified.";return;}
  if(b.id==="v32Approve"){decide(current,"APPROVE_READINESS",$("v32OwnerNote").value);save(current);render();renderSaved();$("v32Status").textContent="Owner readiness decision recorded locally. No agent was activated.";return;}
  if(b.id==="v32Reject"){decide(current,"REJECT",$("v32OwnerNote").value);save(current);render();renderSaved();$("v32Status").textContent="Owner rejection recorded locally.";return;}
  if(b.id==="v32Export"){if(!current)throw new Error("Generate or open an evidence pack first.");exportCurrent();return;}
