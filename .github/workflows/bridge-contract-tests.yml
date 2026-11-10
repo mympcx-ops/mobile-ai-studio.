@@ -15,6 +15,7 @@ on:
       - "feature/v1.2-live-command-station"
       - "feature/v2.3-owner-operations-lifecycle"
       - "feature/v3.0-phone-command-and-host-bridge"
+      - "release/v3.0-final"
       - "release/v3.0-on-main"
     paths:
       - "bridge/**"
