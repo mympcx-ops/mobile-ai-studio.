@@ -36,7 +36,7 @@ test("Agent Factory browser workbench is included in the offline shell", () => {
 });
 
 test("service worker cache version is bumped for the expanded shell", () => {
-  assert.match(serviceWorker, /const CACHE=["']mobile-ai-studio-shell-v23["']/);
+  assert.match(serviceWorker, /const CACHE=["']mobile-ai-studio-shell-v24["']/);
 });
 
 test("V2.2 Owner Approval Center and floor dashboards are included in the offline shell", () => {
@@ -66,4 +66,13 @@ test("V2.1 command station assets are included in the offline shell", () => {
   assert.ok(cached.has("v2.1-studio-systems.js"));
   assert.ok(cached.has("v2.1-command-station.css"));
   assert.match(indexHtml, /v2\.1-command-station\.css/);
+});
+
+test("V3.5 Agent Arena and Identity Studio assets are integrated and precached", () => {
+  const cached = new Set(precachedFiles(serviceWorker));
+  assert.ok(cached.has("agent-arena.js"));
+  assert.ok(cached.has("agent-arena.css"));
+  assert.match(indexHtml, /agent-arena\.js/);
+  assert.match(indexHtml, /agent-arena\.css/);
+  execFileSync(process.execPath, [ "--check", path.join(root, "agent-arena.js") ]);
 });
