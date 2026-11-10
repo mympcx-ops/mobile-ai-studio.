@@ -17,6 +17,7 @@ on:
       - "feature/v3.0-phone-command-and-host-bridge"
       - "release/v3.0-final"
       - "release/v3.0-on-main"
+      - "feature/prompt-to-agent-intelligence"
     paths:
       - "bridge/**"
       - "tests/**"
@@ -47,6 +48,8 @@ jobs:
         run: node --check v2.3-owner-operations.js
       - name: Syntax-check V3.0 phone command UI
         run: node --check v3.0-phone-command.js
+      - name: Syntax-check prompt-to-agent planner
+        run: node --check prompt-to-agent.js
       - name: Validate V3.0 protocol schema JSON
         run: node -e "JSON.parse(require('node:fs').readFileSync('bridge/protocol-v3.schema.json','utf8'))"
       - name: Run all bridge and factory tests
