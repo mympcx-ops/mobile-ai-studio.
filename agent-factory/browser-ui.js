@@ -25,7 +25,7 @@ function inject(){
  '<div class="notice">Build a structured blueprint from the canonical roster, then send it through the independent validation checklist. This creates a review package only. It does not run an agent, call a model, dispatch work, or connect to your PC.</div>'+
  '<div class="panel" style="margin-top:9px"><h3>1 · Build an agent blueprint</h3><select id="afAgent" class="field"><option value="">Select a canonical agent</option></select><input id="afBuilderId" class="field" style="margin-top:8px" placeholder="Builder ID / role (for audit attribution)"><input id="afBuilderLabel" class="field" style="margin-top:8px" placeholder="Builder display label"><textarea id="afScope" class="field" style="margin-top:8px" placeholder="Build notes or scope refinements (optional)"></textarea><button id="afBuild" class="primary" style="width:100%;margin-top:9px">Build blueprint package</button><p id="afBuildStatus" class="small" aria-live="polite"></p></div>'+
  '<div class="panel" style="margin-top:9px"><h3>2 · Independent validation</h3><select id="afPackage" class="field"><option value="">Select a built package</option></select><input id="afReviewerId" class="field" style="margin-top:8px" placeholder="Independent reviewer ID"><input id="afReviewerLabel" class="field" style="margin-top:8px" placeholder="Independent reviewer display label"><p class="small">Mark each check PASS only after reviewing the package and its source evidence.</p><div id="afChecks"></div><textarea id="afEvidence" class="field" style="margin-top:8px" rows="5" placeholder="Enter 7 evidence lines, one per check: evidence-reference | what you inspected and observed"></textarea><button id="afReview" class="primary" style="width:100%;margin-top:9px">Record independent review</button><p id="afReviewStatus" class="small" aria-live="polite"></p></div>'+
- '<div class="panel" style="margin-top:9px"><div class="row between"><h3>3 · Factory packages</h3><span id="afCounts" class="small"></span></div><div id="afPackageList"></div><pre id="afPreview" class="item" style="white-space:pre-wrap;overflow-wrap:anywhere;max-height:340px;overflow:auto">Build a blueprint to preview its package.</pre><button id="afCopy" style="width:100%">Copy selected package JSON</button></div>';
+ '<div class="panel" style="margin-top:9px"><div class="row between"><h3>3 · Factory packages</h3><span id="afCounts" class="small"></span></div><div id="afPackageList"></div><pre id="afPreview" class="item" style="white-space:pre-wrap;overflow-wrap:anywhere;max-height:340px;overflow:auto">Build a blueprint to preview its package.</pre><button id="afCopy" style="width:100%">Copy selected package JSON</button><button id="afDownload" class="primary" style="width:100%;margin-top:8px">Download verified agent package (.json)</button><p id="afExportStatus" class="small" aria-live="polite">Offline export only · PC import remains manual</p></div>';
  root.appendChild(section);
  $("afChecks").innerHTML=CHECKS.map(([id,label])=>'<label class="item" style="display:flex;gap:10px;align-items:flex-start"><input type="checkbox" data-af-check="'+id+'" style="width:auto;margin-top:3px"><span>'+esc(label)+'</span></label>').join("");
  $("afAgent").innerHTML='<option value="">Select a canonical agent</option>'+catalog().agents.map(a=>'<option value="'+esc(a.id)+'">'+esc(a.floor+" · "+a.name)+'</option>').join("");
@@ -38,7 +38,7 @@ function render(){
  if(previous&&state.packages.some(p=>p.packageId===previous))select.value=previous;
  $("afCounts").textContent=state.packages.length+" packages · "+state.reviews.length+" reviews";
  list.innerHTML=state.packages.length?state.packages.map(p=>'<div class="item"><strong>'+esc(p.agent.name)+'</strong><small>'+esc(p.packageStatus)+' · '+esc(p.packageId)+'</small></div>').join(""):'<div class="empty">No packages built yet.</div>';
- const p=selectedPackage();$("afPreview").textContent=p?JSON.stringify(p,null,2):"Select or build a package to preview its JSON.";
+ const p=selectedPackage();$("afPreview").textContent=p?JSON.stringify(p,null,2):"Select or build a package to preview its JSON.";const download=$("afDownload");if(download)download.disabled=!p;
 }
 function instructionFor(agent){
  const c=catalog(),manager=c.managers.find(m=>m.name===agent.manager&&m.floor===agent.floor),director=c.oversight.find(x=>x.floor===agent.floor&&x.role==="Floor Director"),validator=c.oversight.find(x=>x.floor===agent.floor&&x.role==="Independent Validator");
@@ -76,10 +76,32 @@ async function review(){
   state.reviews.unshift(record);if(save())$("afReviewStatus").textContent="Review recorded as pending Owner approval. Agent remains PLANNED and inactive.";
  }catch(e){$("afReviewStatus").textContent=e.message;}
 }
+async function exportSelectedPackage(){
+ const p=selectedPackage(),status=$("afExportStatus");
+ if(!p){if(status)status.textContent="Select a package first.";return;}
+ try{
+  const {packageId,integritySha256,...body}=p;
+  if(await fingerprint(body)!==integritySha256){if(status)status.textContent="Blocked: package integrity check failed. No file was exported.";return;}
+  const envelope={
+   format:"mobile-ai-studio-agent-package-export/1",
+   exportedAt:new Date().toISOString(),
+   package:p,
+   reviews:state.reviews.filter(r=>r.packageId===p.packageId),
+   transfer:{mode:"OFFLINE_FILE_EXPORT",destination:"MANUAL_PC_IMPORT_REQUIRED",automaticInstall:false,executionAuthorized:false}
+  };
+  const safeName=String(p.agent?.name||"agent").toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"").slice(0,48)||"agent";
+  const blob=new Blob([JSON.stringify(envelope,null,2)],{type:"application/json"});
+  const url=URL.createObjectURL(blob),a=document.createElement("a");
+  a.href=url;a.download=safeName+"-"+String(p.packageId).replace(/[^A-Za-z0-9_-]/g,"")+".json";
+  a.style.display="none";document.body.appendChild(a);a.click();a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),1000);
+  if(status)status.textContent="Verified package exported. Transfer the JSON to the PC and wait for a future trusted importer; this file does not install or run an agent.";
+ }catch(e){if(status)status.textContent="Export blocked: "+e.message;}
+}
 document.addEventListener("click",e=>{
  const b=e.target.closest("button");if(!b)return;
  if(b.id==="afBuild")build();
- if(b.id==="afReview")review();
+ if(b.id==="afReview")review();if(b.id==="afDownload")exportSelectedPackage();
  if(b.id==="afCopy"){const p=selectedPackage();if(!p){$("afReviewStatus").textContent="Select a package first.";return;}if(navigator.clipboard?.writeText)navigator.clipboard.writeText(JSON.stringify(p,null,2)).then(()=>$("afReviewStatus").textContent="Package JSON copied.").catch(()=>$("afReviewStatus").textContent="Clipboard unavailable; select the preview text to copy.");else $("afReviewStatus").textContent="Clipboard unavailable; select the preview text to copy.";}
 });
 document.addEventListener("change",e=>{if(e.target.id==="afPackage")render();});
