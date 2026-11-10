@@ -139,3 +139,30 @@ test("rejects review records that claim activation or reuse the builder identity
   });
   assert.equal(validateEnvelope(data).code, "REVIEW_INVALID");
 });
+
+test("read-only CLI validates a selected export without writing to it", () => {
+  const fs = require("node:fs");
+  const os = require("node:os");
+  const path = require("node:path");
+  const { spawnSync } = require("node:child_process");
+  const directory = fs.mkdtempSync(path.join(os.tmpdir(), "mobile-ai-import-"));
+  const file = path.join(directory, "agent.json");
+  try {
+    fs.writeFileSync(file, JSON.stringify(fixture()), "utf8");
+    const before = fs.readFileSync(file);
+    const result = spawnSync(process.execPath, [path.join(__dirname, "..", "desktop-import", "validate-file.cjs"), file], { encoding: "utf8" });
+    assert.equal(result.status, 0, result.stderr);
+    assert.equal(JSON.parse(result.stdout).status, "VALIDATED_UNTRUSTED_PROPOSAL");
+    assert.deepEqual(fs.readFileSync(file), before, "CLI must not modify the export file");
+  } finally {
+    fs.rmSync(directory, { recursive: true, force: true });
+  }
+});
+
+test("read-only CLI rejects missing or ambiguous arguments", () => {
+  const { spawnSync } = require("node:child_process");
+  const path = require("node:path");
+  const result = spawnSync(process.execPath, [path.join(__dirname, "..", "desktop-import", "validate-file.cjs")], { encoding: "utf8" });
+  assert.equal(result.status, 2);
+  assert.equal(JSON.parse(result.stdout).code, "USAGE");
+});
