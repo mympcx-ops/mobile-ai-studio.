@@ -19,6 +19,7 @@ on:
       - "release/v3.0-on-main"
       - "feature/prompt-to-agent-intelligence"
       - "feature/v3.1-tool-registry-dependency-planner"
+      - "feature/v3.2-independent-validation-engine"
     paths:
       - "bridge/**"
       - "tests/**"
@@ -53,6 +54,8 @@ jobs:
         run: node --check prompt-to-agent.js
       - name: Syntax-check tool registry planner
         run: node --check tool-registry.js
+      - name: Syntax-check V3.2 independent validation engine
+        run: node --check independent-validation.js
       - name: Validate V3.0 protocol schema JSON
         run: node -e "JSON.parse(require('node:fs').readFileSync('bridge/protocol-v3.schema.json','utf8'))"
       - name: Run all bridge and factory tests
