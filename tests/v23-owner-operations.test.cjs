@@ -31,11 +31,12 @@ test("V2.3 preserves Owner approval and independent validation gates",()=>{
 
 function runSnapshot(seed,catalog){
  const values=new Map(Object.entries(seed).map(([key,value])=>[key,JSON.stringify(value)]));
- const window={MOBILE_AGENT_CATALOG:catalog,addEventListener(){},setTimeout(fn){fn();}};
- const document={addEventListener(){},getElementById(){return null;}};
+ const listeners={};let scheduled=0;
+ const window={MOBILE_AGENT_CATALOG:catalog,addEventListener(){},setTimeout(fn){scheduled++;fn();}};
+ const document={addEventListener(type,fn){(listeners[type]??=[]).push(fn);},getElementById(){return null;}};
  const context={window,document,localStorage:{getItem(key){return values.has(key)?values.get(key):null;}},setTimeout(fn){fn();}};
  vm.runInNewContext(read("v2.3-owner-operations.js"),context);
- return {api:window.MOBILE_AI_STUDIO_V23,values};
+ return {api:window.MOBILE_AI_STUDIO_V23,values,listeners,get scheduled(){return scheduled;}};
 }
 test("V2.3.1 removes independently reviewed packages from the validation queue",()=>{
  const {api}=runSnapshot({
@@ -55,10 +56,13 @@ test("V2.3.1 removes independently reviewed packages from the validation queue",
  assert.equal(s.floorData[1].packages,1);
  assert.equal(api.readOnly,true);
 });
-test("V2.3.1 exposes a fresh snapshot and refreshes after local lifecycle actions",()=>{
+test("V2.3.1 snapshots current local records and schedules refresh after lifecycle actions",()=>{
  const {api,values}=runSnapshot({}, {agents:[]});
  assert.equal(api.snapshot().pendingApprovals,0);
  values.set("mobile-ai-studio-v1.2-operations",JSON.stringify({approvals:[{status:"PENDING"}]}));
  assert.equal(api.snapshot().pendingApprovals,1);
  assert.equal(api.version,"2.3.1");
+ const button={id:"ccAddApproval",dataset:{},closest(){return this;}};
+ listeners.click[0]({target:button});
+ assert.equal(scheduled,1);
 });
