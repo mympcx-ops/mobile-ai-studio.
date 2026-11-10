@@ -39,5 +39,7 @@ jobs:
         run: node --check agent-factory/browser-ui.js
       - name: Syntax-check Master Pass UI
         run: node --check master-pass.js
-      - name: Syntax-check V2.3 Owner operations UI\n        run: node --check v2.3-owner-operations.js\n      - name: Run all bridge and factory tests
+      - name: Syntax-check V2.3 Owner operations UI
+        run: node --check v2.3-owner-operations.js
+      - name: Run all bridge and factory tests
         run: node --test tests/*.test.cjs
