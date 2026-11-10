@@ -19,8 +19,8 @@ function randomHex(bytes=16){
 }
 function createPairingRequest(input){
  const checked=validateHostOrigin(input?.hostOrigin);if(!checked.ok)throw new Error(checked.reason);
- const now=new Date().toISOString();
- return {protocol:"mobile-ai-studio-bridge/3.0",requestId:"PAIR-"+randomHex(12),nonce:randomHex(24),createdAt:now,expiresAt:new Date(Date.now()+5*60*1000).toISOString(),phoneLabel:String(input?.phoneLabel||"Mobile AI Studio phone").trim().slice(0,80),hostOrigin:checked.origin,requestedCapabilities:[...CAPABILITIES],requestedMode:"READ_ONLY",status:"REQUEST_CREATED_NOT_PAIRED",securityNotice:"This is an unsigned pairing request. It is not proof of identity, does not establish a session, and grants no access."};
+ const nowMs=Date.now(),now=new Date(nowMs).toISOString();
+ return {protocol:"mobile-ai-studio-bridge/3.0",requestId:"PAIR-"+randomHex(12),nonce:randomHex(24),createdAt:now,expiresAt:new Date(nowMs+5*60*1000).toISOString(),phoneLabel:String(input?.phoneLabel||"Mobile AI Studio phone").trim().slice(0,80),hostOrigin:checked.origin,requestedCapabilities:[...CAPABILITIES],requestedMode:"READ_ONLY",status:"REQUEST_CREATED_NOT_PAIRED",securityNotice:"This is an unsigned pairing request. It is not proof of identity, does not establish a session, and grants no access."};
 }
 function exportPackageEnvelope(packageId,storeValue){
  const raw=storeValue===undefined?localStorage.getItem(FACTORY_STORE):storeValue;
