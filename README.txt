@@ -145,3 +145,11 @@ V3.4 / V3.5 DEVELOPMENT STATUS — 2026-11-10
 - Public marketplace, payment, hosted distribution, creator authentication, remote update channels, actual Arena simulations, digital twins, autonomous training and live PC/Quinn/Ollama connection remain future work.
 - V3.5 tests cover package integrity, tampering, unsafe tool/security flags, visual identity constraints, floor-plan preservation and offline shell wiring. GitHub Actions must pass before this branch is considered validated.
 - Android physical-device acceptance, independent security review and Owner merge approval remain separate gates. No V3.5 production release or deployment is claimed.
+
+V3.6 Agent Arena Test Chambers (draft milestone)
+- agent-arena-lab.js adds eight repeatable manual-evidence scenarios for mission fidelity, permissions, evidence discipline, tool discipline, recovery, privacy, collaboration and Owner authority.
+- Each chamber stores observed outcomes and evidence references locally. PASS requires an observation plus an evidence reference; FAIL, BLOCKED and NOT_RUN remain explicit.
+- Saved baseline and candidate chambers can be compared descriptively by scenario. This is not an intelligence score, live agent execution or certification.
+- Agent dispatch, model inference, tool execution, reviewer authentication, independent evidence verification, activation and deployment are not performed by this phone-side module.
+- V3.5 identity allocation now guarantees a distinct default palette/avatar pair for all 35 canonical and oversight roles; Owner edits cannot claim another role's pair.
+- V3.6 scenario outcomes can be reset to NOT_RUN; resetting clears the prior observation and evidence so stale results cannot remain attached.
