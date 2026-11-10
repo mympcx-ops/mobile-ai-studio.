@@ -36,7 +36,7 @@ function remove(sessionId,storage){
  const s=storage||root.localStorage,items=readAll(s).filter(x=>x.sessionId!==sessionId);s.setItem(STORE,JSON.stringify(items));return items;
 }
 function roster(){const c=root.MOBILE_AGENT_CATALOG||{};return [...(c.agents||[]),...(c.oversight||[])];}
-function countRoster(list){const rows=Array.isArray(list)?list:[],oversight=rows.filter(a=>a.role==="Floor Director"||a.role==="Independent Validator").length;return {agents:rows.length-oversight,oversight,managers:(root.MOBILE_AGENT_CATALOG?.managers||[]).length};}
+function countRoster(list,managerCount){const rows=Array.isArray(list)?list:[],oversight=rows.filter(a=>a.role==="Floor Director"||a.role==="Independent Validator").length,managers=Number.isInteger(managerCount)?managerCount:(root.MOBILE_AGENT_CATALOG?.managers||[]).length;return {agents:rows.length-oversight,oversight,managers};}
 const esc=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 function readIdentityStore(){try{return JSON.parse(root.localStorage.getItem("mobile-ai-studio-agent-identities-v1")||"{}")}catch(e){return {}}}
 function avatarMarkup(agent){
