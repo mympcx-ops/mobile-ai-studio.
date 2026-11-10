@@ -69,6 +69,7 @@ footer{text-align:center;color:#68748a;font-size:11px;margin-top:28px}
 <link rel="stylesheet" href="tool-registry.css">
 <link rel="stylesheet" href="independent-validation.css">\n<link rel="stylesheet" href="agent-workflow-orchestrator.css">
 <link rel="stylesheet" href="agent-assurance.css">
+<link rel="stylesheet" href="agent-arena.css">
 </head>
 <body>
 <header><div class="top"><div class="brand"><div class="logo">M</div><span>Mobile AI Studio</span></div><div class="status">● LOCAL MODE</div></div></header>
@@ -81,6 +82,7 @@ footer{text-align:center;color:#68748a;font-size:11px;margin-top:28px}
   <button class="tile" data-go="projects"><div class="ico">📁</div><h3>Projects</h3><p>Keep plans, notes and decisions together.</p></button>
   <button class="tile" data-go="agents"><div class="ico">🤖</div><h3>Agent Directory</h3><p>Import and inspect the canonical agent fleet.</p></button>
   <button class="tile" data-go="testing"><div class="ico">🧪</div><h3>Validation</h3><p>Review agent readiness before approval.</p></button>
+  <button class="tile" data-go="arena"><div class="ico">⚔️</div><h3>Agent Arena</h3><p>Explore agent identities, floor plans and portable blueprints.</p></button>
  </div>
  <div class="section"><div class="section-head"><h2>Workspace status</h2><span class="small">V1.0</span></div><div class="panel"><div class="row between"><span>Phone storage</span><span class="small" style="color:var(--green)">Available</span></div><div class="row between" style="margin-top:12px"><span>GPT connection</span><span class="small">Via ChatGPT app</span></div><div class="row between" style="margin-top:12px"><span>Quinn / local computer</span><span class="small">Not connected</span></div></div></div>
 </section>
@@ -172,6 +174,26 @@ footer{text-align:center;color:#68748a;font-size:11px;margin-top:28px}
  <div class="notice" style="margin-top:12px">Connections show the planned reporting hierarchy only. Live communication pulses will appear only after the real Quinn / STARNet event stream is connected.</div>
 </section>
 
+<section id="arena" class="view">
+ <div class="eyebrow">FLOOR 5 · VISUAL PREVIEW</div><h1>Agent Arena</h1>
+ <p class="muted">Explore the planned fleet, customize each agent's visual identity, and exchange safe blueprint packages.</p>
+ <div class="notice">LOCAL VISUAL PREVIEW · Agents are planned records, not live processes. This screen does not run simulations, dispatch work, certify agents or connect to Quinn.</div>
+ <div class="section arena-shell">
+  <div class="arena-toolbar"><strong>Agent roster</strong><span class="arena-plan-tag">35 EXISTING ROLES</span></div>
+  <div id="arenaRoster" class="arena-stage"></div>
+  <div id="arenaProfile" class="arena-profile"><p class="small">Select an agent to customize its visual identity.</p></div>
+  <div id="arenaMessage" class="arena-message" aria-live="polite">Identity changes affect appearance only. They do not change mission, tools, permissions or validation status.</div>
+ </div>
+ <div class="section"><div class="section-head"><h2>Agent Exchange</h2><span class="small">Blueprint packages</span></div>
+  <div class="notice">Export creates a portable JSON blueprint. Import verifies its SHA-256 fingerprint and stores it as a draft only. No credentials, private memory, granted tools or executable code are transferred.</div>
+  <label class="small" for="arenaImportFile">Import an agent blueprint JSON</label>
+  <input id="arenaImportFile" class="field" type="file" accept="application/json,.json" style="margin-top:7px">
+  <div id="arenaImports" class="panel section"><p class="small">No imported packages yet.</p></div>
+ </div>
+ <div class="section"><div class="section-head"><h2>Studio floor architecture</h2><span class="small">0–9</span></div>
+  <div id="arenaFloors" class="arena-floor-list"></div>
+ </div>
+</section>
 <section id="settings" class="view">
  <div class="eyebrow">PREFERENCES</div><h1>Settings</h1>
  <div class="panel">
@@ -181,7 +203,7 @@ footer{text-align:center;color:#68748a;font-size:11px;margin-top:28px}
   <div class="item"><strong>Data controls</strong><small>Export or clear this device's studio data.</small><div class="modal-actions"><button id="exportData">Export backup</button><button id="clearData">Clear local data</button></div></div>
  </div>
 </section>
-<footer>Mobile AI Studio · V3.0 phone command foundation · V1.0 foundation preserved</footer>
+<footer>Mobile AI Studio · V3.5 Arena & Agent Exchange foundation · V1.0 foundation preserved</footer>
 </main>
 <nav>
 <button data-go="command"><span>⌘</span>Command</button>
@@ -190,6 +212,7 @@ footer{text-align:center;color:#68748a;font-size:11px;margin-top:28px}
 <button data-go="chat"><span>◉</span>Chat</button>
 <button data-go="projects"><span>▣</span>Projects</button>
 <button data-go="agents"><span>✳</span>Agents</button>
+<button data-go="arena"><span>⚔</span>Arena</button>
 <button data-go="settings"><span>⚙</span>Settings</button>
 </nav>
 <script src="command-center.js"></script>
@@ -213,4 +236,5 @@ footer{text-align:center;color:#68748a;font-size:11px;margin-top:28px}
 <script src="tool-registry.js"></script>
 <script src="independent-validation.js"></script>\n<script src="agent-workflow-orchestrator.js"></script>
 <script src="agent-assurance.js"></script>
+<script src="agent-arena.js"></script>
 </body></html>
