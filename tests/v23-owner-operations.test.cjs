@@ -10,7 +10,7 @@ test("V2.3 owner operations overview is wired into the app and offline shell",()
  const html=read("index.html"),sw=read("sw.js");
  assert.match(html,/v2\.3-owner-operations\.css/);
  assert.match(html,/v2\.3-owner-operations\.js/);
- assert.match(sw,/mobile-ai-studio-shell-v17/);
+ assert.match(sw,/mobile-ai-studio-shell-v18/);
  assert.match(sw,/v2\.3-owner-operations\.js/);
  assert.match(sw,/v2\.3-owner-operations\.css/);
 });
@@ -57,12 +57,13 @@ test("V2.3.1 removes independently reviewed packages from the validation queue",
  assert.equal(api.readOnly,true);
 });
 test("V2.3.1 snapshots current local records and schedules refresh after lifecycle actions",()=>{
- const {api,values}=runSnapshot({}, {agents:[]});
+ const runtime=runSnapshot({}, {agents:[]});
+ const {api,values}=runtime;
  assert.equal(api.snapshot().pendingApprovals,0);
  values.set("mobile-ai-studio-v1.2-operations",JSON.stringify({approvals:[{status:"PENDING"}]}));
  assert.equal(api.snapshot().pendingApprovals,1);
  assert.equal(api.version,"2.3.1");
  const button={id:"ccAddApproval",dataset:{},closest(){return this;}};
- listeners.click[0]({target:button});
- assert.equal(scheduled,1);
+ runtime.listeners.click[0]({target:button});
+ assert.equal(runtime.scheduled,1);
 });
